@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Weather app</title>
+    <meta name="author" content="Dev" />
+    <link rel="stylesheet" href="./stylesheet.css" />
+    <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+  </head>
+  <body>
+    <div class="full_body">
+        <div class="input_form">
+          <input type="text" id="city" class="search_bar" />
+          <div class="search_img">
+            <button onclick="get_lat_long()">
+              <img src="./images/search.png" />
+            </button>
+          </div>
+        </div>
+      <div class="second_section">
+        <div class="weather_img"><img id="weather_icon" src="./images/clear.png" /></div>
+        <div id="temperature" class="temperature">7&#8451;</div>
+        <div id="cityval" class="city">New York</div>
+      </div>
+      <div class="third_section">
+        <div>
+          <img class="weather_des_image" src="./images/humidity.png" />
+          <div class="des_text">
+            <div id="humidity">48%</div>
+            <div>Humidity</div>
+          </div>
+        </div>
+        <div>
+          <img class="weather_des_image" src="./images/wind.png" />
+          <div class="des_text">
+            <div id="wind">10</div>
+            <div>Wind</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./script.js" ></script>
+  </body>
+</html>
