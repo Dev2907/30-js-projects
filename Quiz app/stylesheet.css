@@ -1,0 +1,18 @@
+.body_background{
+    background-color: #031E4F;
+    height : 100vh;
+}
+.question{
+    color: #031E4F ;
+}
+.submit{
+    background-color: #031E4F;
+    color: white;
+    border: none;
+}
+.submit:active{
+    background-color: #031639;
+}
+.hide{
+    display: none;
+}
