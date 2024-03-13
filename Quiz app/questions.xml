@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+    <question>
+        <text>What is the Longest animal in world </text>
+        <options>Shark</options>
+        <options>Blue Whale</options>
+        <options>Elephant</options>
+        <options>Giraffe</options>
+        <answer>2</answer>
+    </question>
+    <question>
+        <text>What is the Longest animal in world ? </text>
+        <options>Shark</options>
+        <options>Blue Whale</options>
+        <options>Elephant</options>
+        <options>Giraffe</options>
+        <answer>2</answer>
+    </question>
+</quiz>
