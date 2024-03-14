@@ -1,0 +1,10 @@
+.body_background{
+    background-color: #0b2334;
+    height: 100vh;
+}
+input{
+    outline: none;
+}
+.input_img{
+    width: 10%;
+}
