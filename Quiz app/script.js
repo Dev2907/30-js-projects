@@ -19,6 +19,12 @@ window.onload = async function(){
     load_cur_question(Number(JSON.parse(localStorage.getItem('cur_question_id'))));
 }
 
+window.closed = function(){
+    localStorage.removeItem('cur_question_id');
+    localStorage.removeItem('is_done');
+    localStorage.removeItem('quiz');
+}
+
 async function load_quiz(){
     localStorage.setItem("quiz",JSON.stringify([]))
     localStorage.setItem("is_done",JSON.stringify(false))
