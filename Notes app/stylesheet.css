@@ -1,0 +1,9 @@
+body{
+    height: 100vh;
+    background-image: linear-gradient(to bottom right,#cf9aff,#9fc0ff);
+}
+
+textarea{
+    resize:none !important;
+    height: 70px;
+}
