@@ -35,7 +35,6 @@ function add_box_event(element){
     })
     element.addEventListener('drop',(event)=>{
         event.preventDefault(); 
-        // debugger;
         let task = document.getElementById(event.dataTransfer.getData('item_id'));
         let tasks = document.getElementById('task_list')
         let boxabove = document.createElement("div")

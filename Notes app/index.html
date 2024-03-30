@@ -8,22 +8,24 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <script src="https://kit.fontawesome.com/d9efd81c39.js" crossorigin="anonymous"></script>
     </head>
-    <body class="m-0 d-flex pt-5">
-        <div class="row w-100 h-100">
+    <body class="m-0 d-flex pt-2">
+        <div class="row w-100 main_body">
             <div class="col-sm-2"></div>
             <div class="col-sm-8" >
                 <div class="d-flex">
-                    <i class="fs-3 me-2 text-primary-emphasis fa-solid fa-note-sticky"></i>
+                    <i class="fs-3 me-2 text-light fa-solid fa-note-sticky"></i>
                     <h3 class="text-light fw-bold">Notes</h3>
                 </div>
-                <hr/>
+                <hr class="text-light"/>
                 <div class="d-flex gap-3">
                     <button class="btn btn-dark" onclick="createNewNote()">Create New</button>
-                    <input type="text" class="flex-fill bg-light rounded-pill p-3" placeholder="Search"/>
+                    <div class="position-relative flex-fill">
+                        <input id="search" type="text" class="form-control bg-light rounded-pill p-3" placeholder="Search (note: search is case sensitive)">
+                        <button class="btn btn-clear position-absolute top-50 translate-middle-y end-0 me-2" onclick="clear_search_input()">&#x2715;</button>
+                    </div>
                 </div>
                 <br/>
-                <div id="all_notes" class="px-3 100">
-                    <br/>
+                <div id="all_notes" class="px-3">
                     <div class="row row_last">
                     </div>
                     <br/>
