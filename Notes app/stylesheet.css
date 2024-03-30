@@ -1,9 +1,22 @@
-body{
+ body{
     height: 100vh;
-    background-image: linear-gradient(to bottom right,#cf9aff,#9fc0ff);
+    background-image: linear-gradient(to bottom right, #1B3678, #290A32);
+    overflow: hidden;
 }
 
 textarea{
     resize:none !important;
     height: 70px;
+}
+
+#all_notes{
+    overflow-y: scroll;
+    height:75vh;
+    scrollbar-width: none;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+.dropover{
+    border: 1px solid white;
 }
