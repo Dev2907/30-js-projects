@@ -10,7 +10,12 @@ function calculateAge(){
     let now = new Date()
     let selected = new Date(document.getElementById("date_input").value)
     let yr = now.getFullYear() - selected.getFullYear()
-    let mon = now.getMonth() - selected.getMonth()
-    let day = now.getDate() - selected.getDate()
+    let mon = (yr)? 11 - selected.getMonth() : now.getMonth() - selected.getMonth(); 
+    let day = daysInMonth(now.getMonth(),now.getFullYear()) - selected.getDate()
     document.getElementById("res").innerHTML = res_string(yr,mon,day)
 }
+
+function daysInMonth(month, year) {
+    return new Date(year, month, 0).getDate();
+}
+ 
