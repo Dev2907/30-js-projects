@@ -1,4 +1,4 @@
-var key = "";
+const key = "";
 
 async function get_lat_long() {
   let cityname = document.getElementById("city").value;
