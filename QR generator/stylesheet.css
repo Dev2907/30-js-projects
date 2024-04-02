@@ -1,0 +1,16 @@
+.body{
+    height: 100vh;
+    background-color: #1F212C;
+}
+.img{
+    width : 40%;
+}
+.img >img{
+    width: 100%;
+}
+.btn_generate{
+    background-color: #4519b2 !important;
+}
+.btn_generate:active{
+    background-color: #4a16cb !important;
+}
