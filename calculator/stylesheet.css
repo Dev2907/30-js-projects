@@ -1,0 +1,20 @@
+
+.body{
+    background-color: #E2F6FE;
+    height: 100vh;
+}
+.calc{
+    background-color: #2e3642;
+}
+.but{
+   background-color: #363d48;
+   width: 25%;
+   box-shadow: 1px 1px 4px 2px  #3f4652;
+}
+.top{
+    color: #40999c;
+}
+
+.but:active{
+    background-color: #414958;
+}
