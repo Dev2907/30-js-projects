@@ -27,3 +27,6 @@ input[type="text"]:focus{
 .task_content{
     max-height: 75vh;
 }
+.mouse_hover:hover{
+    cursor: pointer;
+}

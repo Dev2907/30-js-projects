@@ -8,3 +8,6 @@ input{
 .input_img{
     width: 10%;
 }
+.mouse_hover:hover{
+    cursor: pointer;
+}

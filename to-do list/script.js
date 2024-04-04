@@ -11,6 +11,12 @@ window.onload = function(){
     box.forEach((element)=>{
         add_box_event(element);
     });
+    let input = document.getElementById("task");
+    input.addEventListener('keypress',(event)=>{
+        if(event.key == "Enter" ){
+            addtask()
+        }
+    })
 }
 
 function add_dragabble_event(element){

@@ -56,8 +56,8 @@ function _note(is_input, key="",heading="", tags="", content=""){
         <hr />
         <p class="card-text"><textarea id="content" class="w-100"></textarea></p>
         <div class="d-flex gap-2">
-            <button onclick="add_new_note()" class="btn btn-dark">Add</button>
-            <button onclick="cancel_new_note()" class="btn btn-dark">Cancel</button>
+            <button onclick="add_new_note()" class="w-50 btn btn-dark">Add</button>
+            <button onclick="cancel_new_note()" class="w-50 btn btn-dark">Cancel</button>
         </div>
     </div>`
     }
@@ -67,12 +67,14 @@ function _note(is_input, key="",heading="", tags="", content=""){
     }
 
     let html=`<div id=${key} draggable="true" class="note card p-2">
-    <div class="d-flex w-100 gap-2 ">
-        <h5 class="card-title text-wrap w-50 flex-fill fw-bold">${heading}</h5>
-        <div class="tags d-flex gap-2 align-items-center">
-        ${tags_string}
+    <div class=" w-100 gap-2 ">
+        <div class="d-flex w-100 card-title">
+            <h5 class="head text-wrap fw-bold">${heading}</h5>
+            <i onclick="delete_note('${key}')" class="fa-solid fa-trash-can"></i>
         </div>
-        <i onclick="delete_note('${key}')" class="fa-solid fa-trash-can"></i>
+        <div class="tags flex-wrap d-flex gap-2 align-items-center">
+            ${tags_string}
+        </div>
     </div>
     <hr />
     <textarea class="card-text border-0" readonly>${content}</textarea>

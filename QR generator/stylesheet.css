@@ -14,3 +14,6 @@
 .btn_generate:active{
     background-color: #4a16cb !important;
 }
+.mouse_hover:hover{
+    cursor: pointer;
+}
