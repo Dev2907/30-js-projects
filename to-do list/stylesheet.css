@@ -20,3 +20,10 @@ input[type="text"]:focus{
 .box{
     height:5px;
 }
+.task_name{
+    word-wrap: break-word;
+    white-space: normal; 
+}
+.task_content{
+    max-height: 75vh;
+}

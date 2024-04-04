@@ -12,7 +12,8 @@ function generate_qr() {
   let url = document.getElementById("link").value;
   let qr = document.getElementById("qr");
   if (url && qr.childElementCount == 0){
-    return new QRCode("qr", {
+    document.getElementById('QR code').innerHTML += `<i style="font-size: 10px;">click on image to copy to clipboard</i>`
+    new QRCode("qr", {
         text: url,
         width: 256,
         height: 256,
