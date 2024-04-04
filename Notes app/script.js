@@ -63,16 +63,16 @@ function _note(is_input, key="",heading="", tags="", content=""){
     }
     let tags_string = ""
     for(let i=0; i<tags.length; i++) {
-        tags_string += `<div class="bg-success rounded-pill py-1 px-2 text-white">${tags[i]}</div>`
+        tags_string += `<div class="tag bg-success rounded-pill py-1 px-2 text-white">${tags[i]}</div>`
     }
-    tags_string += `<i onclick="delete_note('${key}')" class="fa-solid fa-trash-can"></i>`
 
     let html=`<div id=${key} draggable="true" class="note card p-2">
-    <div class="d-flex w-100 h-10">
-        <h5 class="card-title text-wrap flex-fill fw-bold">${heading}</h5>
-        <div class="d-flex flex-wrap gap-2 align-items-center">
+    <div class="d-flex w-100 gap-2 ">
+        <h5 class="card-title text-wrap w-50 flex-fill fw-bold">${heading}</h5>
+        <div class="tags d-flex gap-2 align-items-center">
         ${tags_string}
         </div>
+        <i onclick="delete_note('${key}')" class="fa-solid fa-trash-can"></i>
     </div>
     <hr />
     <textarea class="card-text border-0" readonly>${content}</textarea>

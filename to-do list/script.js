@@ -70,7 +70,7 @@ function addtask(){
         let html = `
                     <div id="${task_id}" draggable="true" class="item d-flex justify-content-between my-2">
                         <div id="task_done_but_${task_id}" class="me-2 rounded-circle"><button onclick="task_done('${task_id}')" class="bg-white border-0 fa-regular fa-circle"></button></div>
-                        <div id="task_name_${task_id}" class="flex-fill">${task.value}</div>
+                        <div id="task_name_${task_id}" class="flex-fill w-75 task_name">${task.value}</div>
                         <div><button onclick="delete_task('${task_id}')" class="bg-white border-0 fa-solid fa-xmark"></button></div>
                     </div>
                     <div class="box w-100 "></div>`
@@ -87,14 +87,14 @@ function displaytask(){
             html += `<div class="box w-100"></div>
                     <div draggable="true" id="${task_list[i].id}" class="item d-flex justify-content-between my-2">
                         <div id="task_done_but_${task_list[i].id}" class="me-2 rounded-circle"><button onclick="task_done('${task_list[i].id}')" class="bg-white border-0 fa-regular fa-circle"></button></div>
-                        <div id="task_name_${task_list[i].id}" class="flex-fill">${task_list[i].task}</div>
+                        <div id="task_name_${task_list[i].id}" class="flex-fill w-75 task_name">${task_list[i].task}</div>
                         <div><button onclick="delete_task('${i}')" class="bg-white border-0 fa-solid fa-xmark"></button></div>
                     </div>`
         }else{
             html += `<div class="box w-100 "></div>
                     <div draggable="true" id="${task_list[i].id}" class="item d-flex justify-content-between my-2">
                         <div id="task_done_but_${task_list[i].id}" class="me-2 rounded-circle add_button"><button onclick="task_done('${task_list[i].id}')" class="add_button border-0 text-white rounded-circle fa-solid fa-check"></button></div>
-                        <div id="task_name_${task_list[i].id}" class="flex-fill text-decoration-line-through">${task_list[i].task}</div>
+                        <div id="task_name_${task_list[i].id}" class="flex-fill w-75 task_name text-decoration-line-through">${task_list[i].task}</div>
                         <div><button onclick="delete_task('${i}')" class="bg-white border-0 fa-solid fa-xmark"></button></div>
                     </div>`
         }

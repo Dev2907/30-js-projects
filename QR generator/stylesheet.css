@@ -3,10 +3,10 @@
     background-color: #1F212C;
 }
 .img{
-    width : 40%;
+    width : 100%;
 }
 .img >img{
-    width: 100%;
+    width: 50%;
 }
 .btn_generate{
     background-color: #4519b2 !important;

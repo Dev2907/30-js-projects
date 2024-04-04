@@ -17,11 +17,10 @@
                     <div class="card-title fs-5 fw-bold">Generate QR code from Text</div>
                     <hr class="border border-1 rounded-pill opacity-100"/>
                     <div class="card-text d-flex justify-content-center"><input id="link" type="text" class="w-100 rounded p-1 outline" /></div>
-                    <div id="QR code" class="p-2 d-flex align-items-center text-center flex-column fw-bold">
-                        Live Preview
-                        <div class="img pt-2" id="qr" onclick="copy_to_clipboard()"></div>
+                    <div id="QR code" class="p-2 d-flex align-items-center flex-column">
+                        <div class="fw-bold text-center">Live Preview</div>
+                        <div class="img pt-2 d-flex justify-content-center" id="qr" onclick="copy_to_clipboard()"></div>
                     </div>
-                    <br />
                     <div class="d-flex justify-content-center" id="button_box">
                         <button onclick="generate_qr()" class="btn btn_generate rounded w-50 text-light">Generate QR Code</button>
                     </div>
