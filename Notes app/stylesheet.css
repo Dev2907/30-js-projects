@@ -1,4 +1,4 @@
- body{
+body{
     height: 100vh;
     background-image: linear-gradient(to bottom right, #1B3678, #290A32);
     overflow: hidden;
@@ -19,4 +19,18 @@ textarea{
 }
 .dropover{
     border: 1px solid white;
+}
+.tags{
+    max-width: 40%;
+    overflow: scroll ;
+    max-height: 10vh;
+}
+.tag{
+    font-size: 15px;
+    max-height: 100%;
+    overflow-y: scroll;
+    max-width: 100%;
+    min-width: 50%;
+    word-wrap: break-word;
+    white-space: normal; 
 }
