@@ -7,5 +7,26 @@
 }
 .but{
     background-color: inherit;
-    border: none;
+}
+.but:active{
+    background-color: #1c1e26;
+}
+.bg_primary{
+    background-color : #fc3838;
+}
+.bg_primary:active{
+    background-color: #f65454;
+}
+.timer{
+    font-family: 'Reddit Mono';
+}
+.watch{
+    background-color: #282a36 ;
+    box-shadow: 1px 1px 3px white;
+}
+.bg_table{
+    background-color: inherit !important;
+}
+th, td{
+    padding:10px;
 }
