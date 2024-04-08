@@ -1,0 +1,8 @@
+.body{
+    height: 100vh;
+    background-color: #4287f5;
+}
+.inside{
+    width: 90%;
+    margin: auto;
+}
