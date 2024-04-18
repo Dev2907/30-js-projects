@@ -18,7 +18,7 @@
                 </div>
                 <hr class="text-light"/>
                 <div class="d-flex gap-3">
-                    <button class="btn btn-dark" onclick="createNewNote()">Create New</button>
+                    <button id="new_note_btn" class="btn btn-dark" onclick="createNewNote()">Create New</button>
                     <div class="position-relative flex-fill">
                         <input id="search" type="text" class="form-control bg-light rounded-pill p-3" placeholder="Search (note: search is case sensitive)">
                         <button class="btn btn-clear position-absolute top-50 translate-middle-y end-0 me-2" onclick="clear_search_input()">&#x2715;</button>
@@ -34,5 +34,12 @@
             <div class="col-sm-2"></div>
         </div>
     </body>
-    <script src="./script.js"></script>
+    <script type="module" src="./script.js"></script>
+    <script>
+        document.getElementById("search").addEventListener('keypress',(event)=>{
+            if(event.key == "Enter" ){
+                search_note(document.getElementById("search").value);
+            }
+        })
+    </script>
 </html>
