@@ -1,50 +1,37 @@
+import notesDB from "./DB.js";
+
+const db = new notesDB();
 let num_notes = 0
 let cur_placements = {}
-let cur_state="view";
+let allow_update=true;
 window.onload = ()=>{
-    if(! localStorage.hasOwnProperty("cur_placement")){
-        localStorage.setItem("cur_placement",JSON.stringify({}))
+    let success =(val)=>{
+        cur_placements = JSON.parse(localStorage.getItem("cur_placements"));
+        num_notes = val
+        show_all();
     }
     
-    let request = indexedDB.open("notes", 1)
-    request.onerror = (event)=>{
-        console.log(`DB Error: ${event.target.errorCode}`)
-    }
-
-    request.onupgradeneeded = (event)=>{
-        console.log("upgrade")
-        const db = event.target.result;
-        const object_store = db.createObjectStore("all_notes", {KeyPath:"id", autoIncrement: true});
-        object_store.createIndex("tags","tags");
-        object_store.createIndex("name","name")
-    }
-    
-    request.onsuccess = (event)=>{
-        let db = event.target.result;
-        let object_store = db.transaction(["all_notes"],"readwrite").objectStore("all_notes");
-        let request_all = object_store.count()
-        request_all.onsuccess=(event)=>{
-            cur_placements = JSON.parse(localStorage.getItem("cur_placements"));
-            num_notes = event.target.result
-            show_all();
-        }
-    }
-
-    document.getElementById("search").addEventListener('keypress',(event)=>{
-        if(event.key == "Enter" ){
-            search_note(document.getElementById("search").value);
-        }
-    })
+    db.initialize(success);
 }
 window.addEventListener("beforeunload", function(event) {
     // Code to execute when the page is about to be unloaded
     // You can also return a string to display a confirmation message to the user
-    event.preventDefault(); // This is necessary for some browsers to display the confirmation dialog
-    if(cur_state == "input"){
+    if(!allow_update){
+        event.preventDefault(); // This is necessary for some browsers to display the confirmation dialog
         cancel_new_note()
         event.returnValue = ""; // This is necessary for some browsers to display the confirmation dialog
     }
 });
+
+function disable_add_btn(){
+    allow_update = false;
+    document.getElementById("new_note_btn").disabled = true;
+}
+
+function enable_add_btn(){
+    allow_update = true;
+    document.getElementById("new_note_btn").disabled = false;
+}
 
 function _note(is_input, key="",heading="", tags="", content=""){
     if (is_input){
@@ -61,6 +48,7 @@ function _note(is_input, key="",heading="", tags="", content=""){
         </div>
     </div>`
     }
+
     let tags_string = ""
     for(let i=0; i<tags.length; i++) {
         tags_string += `<div class="tag bg-success rounded-pill py-1 px-2 text-white">${tags[i]}</div>`
@@ -99,7 +87,7 @@ function _shift(direction, start, end){
             cur_placements[cur_box.id] = cur_box.firstElementChild.id;
         }
     }
-    localStorage.setItem("cur_placements", JSON.stringify(cur_placements));
+    db.setLS("cur_placements",cur_placements);
 }
 
 function add_draggable_event(node){
@@ -131,31 +119,21 @@ function add_box_event(node){
         target_box.appendChild(prev_note);
         cur_placements[prev_box.id] = target_note.id;
         cur_placements[target_box.id]  = prev_note.id;
-        localStorage.setItem("cur_placements", JSON.stringify(cur_placements));
+        db.setLS("cur_placements",cur_placements)
     })
 }
 
-function dbrequest(successcallback) {
-    let request = indexedDB.open("notes")
-    request.onerror = (event)=>{
-        console.log(`DB Error: ${event.target.errorCode}`)
-    }
-    request.onsuccess = successcallback
-}
-
-function show_all(){
-    dbrequest((event)=>{
-        let object_store = event.target.result.transaction(["all_notes"],"readwrite").objectStore("all_notes");
-        for(let i=0; i<num_notes; i+=1){
-            let match = cur_placements[i].match(/\d+/)[0];
-            let request_note = object_store.get(parseInt(match))
-            request_note.onsuccess = (event)=>{
-                let obj = event.target.result;
-                add_box(i);
-                add_note(i,cur_placements[i],obj['name'],obj['tags'],obj['content'])
-            }
+async function show_all(num_notes, cur_placements) {
+    for (let i = 0; i < num_notes; i += 1) {
+        let match = cur_placements[i].match(/\d+/)[0];
+        let note = await db.get_note(parseInt(match));
+        if (note) {
+            add_box(i);
+            add_note(i, cur_placements[i], note['name'], note['tags'], note['content']);
+        } else {
+            break;
         }
-    });
+    }
 }
 
 function add_box(id){
@@ -176,8 +154,8 @@ function add_box(id){
 }
 
 function createNewNote(id=0){
-    if(cur_state == "view"){
-        cur_state = "input";
+    if(allow_update){
+        disable_add_btn();
         add_box(num_notes);
         cur_placements = {};
         _shift("foreward",num_notes,0)
@@ -186,25 +164,22 @@ function createNewNote(id=0){
     }
 }
 
-function add_new_note(){
+async function add_new_note(){
     let heading = document.getElementById("heading").value;
     let tags = document.getElementById("tags").value;
     let content = document.getElementById("content").value;
     tags = tags.split(",");
-
-    dbrequest((event)=>{
-        let object_store = event.target.result.transaction(["all_notes"],"readwrite").objectStore("all_notes");
-        let request_add = object_store.add({
+    let data = {
         "name": heading, 
         "tags": tags, 
         "content": content,
-        })
-        request_add.onsuccess=(event)=>{
-            add_note(0,`item_${event.target.result}`,heading,tags,content)
-            cur_state = "view"
-            num_notes+=1;
-        }
-    })
+    }
+    let id = await db.add_note(data)
+    if(id){
+        add_note(0,`item_${id}`,heading,tags,content)
+        enable_add_btn()
+        num_notes+=1;
+    }
 }
 
 function add_note(box_id,key,heading, tags, content) {
@@ -212,7 +187,7 @@ function add_note(box_id,key,heading, tags, content) {
     box.innerHTML = _note(false,key,heading,tags,content);
     add_draggable_event(box.firstElementChild)
     cur_placements[box_id] = key;
-    localStorage.setItem("cur_placements", JSON.stringify(cur_placements));
+    db.setLS("cur_placements",cur_placements);
 }
 
 function cancel_new_note(){
@@ -220,50 +195,42 @@ function cancel_new_note(){
     cur_placements = {}
     _shift("backward",0,num_notes)
     document.getElementById(num_notes).remove();
+    enable_add_btn();
 }
 
-function delete_note(key){
-    dbrequest((event)=>{
-        let object_store = event.target.result.transaction(["all_notes"],"readwrite").objectStore("all_notes");
+async function delete_note(key){
+    try{
         let match = key.match(/\d+/)[0];
-        let request_delete = object_store.delete(parseInt(match));
-        request_delete.onsuccess = ()=>{
-            let note = document.getElementById(key);
-            let box = note.parentElement;
-            note.remove();
-            _shift("backward",parseInt(box.id),num_notes-1)
-            document.getElementById(num_notes-1).remove();
-            num_notes-=1;
-            last_row = document.querySelectorAll('.row_last')[0];
-            if (last_row.childElementCount == 0 && document.querySelectorAll(".row").length>2){
-                last_row.remove();
-                document.getElementById(num_notes-1).parentElement.classList.add("row_last");
-            }
+        await db.delete_note(parseInt(match))
+        let note = document.getElementById(key);
+        let box = note.parentElement;
+        note.remove();
+        _shift("backward",parseInt(box.id),num_notes-1)
+        document.getElementById(num_notes-1).remove();
+        num_notes-=1;
+        let last_row = document.querySelectorAll('.row_last')[0];
+        if (last_row.childElementCount == 0 && document.querySelectorAll(".row").length>2){
+            last_row.remove();
+            document.getElementById(num_notes-1).parentElement.classList.add("row_last");
         }
-    });
+    }catch(error){
+        console.log(error)
+    }
 }
 
-function search_note(query){
+async function search_note(query){
     if(query){
+        let callback = (key,record) => {
+            let box = add_box(0)
+            box.innerHTML = _note(false,`item_${key}`,record["name"],record["tags"],record["content"]);
+        }
         document.getElementById('all_notes').innerHTML = "<div class='row row_last'></div><br/>";
-        cur_state = "search";
-        dbrequest((event)=>{
-            let request_cursor = event.target.result.transaction(["all_notes"],"readwrite").objectStore("all_notes").openCursor();
-            request_cursor.onsuccess = (event)=>{
-                let cursor = event.target.result;
-                if (cursor){
-                    let record = cursor.value;
-                    if (record.tags.includes(query) || record.name.toLowerCase().includes(query.toLowerCase()) || record.content.includes(query)){
-                        let box = add_box(0)
-                        box.innerHTML = _note(false,`item_${cursor.key}`,record["name"],record["tags"],record["content"]);
-                    }
-                    cursor.continue();
-                }
-            }
-        })
+        disable_add_btn();
+        await db.search_note(query, callback);
+
     }else{
         clear_search_input()
-        cur_state = "view"
+        enable_add_btn();
     }
 }
 
@@ -272,3 +239,10 @@ function clear_search_input(){
     document.getElementById("search").value = '';
     show_all()
 }
+
+window.clear_search_input = clear_search_input
+window.createNewNote = createNewNote
+window.add_new_note = add_new_note
+window.cancel_new_note = cancel_new_note
+window.delete_note = delete_note
+window.search_note = search_note
