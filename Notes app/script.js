@@ -1,17 +1,17 @@
-import notesDB from "./DB.js";
+import notesDB from "./DB copy.js";
 
-const db = new notesDB();
-let num_notes = 0
+let db = null;
+let num_notes = null;
 let cur_placements = {}
 let allow_update=true;
 window.onload = ()=>{
     let success =(val)=>{
         cur_placements = JSON.parse(localStorage.getItem("cur_placements"));
         num_notes = val
+        console.log(num_notes);
         show_all();
     }
-    
-    db.initialize(success);
+    db = new notesDB(success)
 }
 window.addEventListener("beforeunload", function(event) {
     // Code to execute when the page is about to be unloaded
