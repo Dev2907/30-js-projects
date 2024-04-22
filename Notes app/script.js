@@ -1,34 +1,34 @@
 import notesDB from "./DB.js";
 
-const db = new notesDB();
-let num_notes = 0
+let db = null;
+let num_notes = null;
 let cur_placements = {}
 let allow_update=true;
 window.onload = ()=>{
     let success =(val)=>{
         cur_placements = JSON.parse(localStorage.getItem("cur_placements"));
         num_notes = val
-        show_all();
+        console.log(`Current Number of Notes : ${num_notes}`);
+        show_all(num_notes,cur_placements);
     }
-    
-    db.initialize(success);
+    db = new notesDB(success)
 }
 window.addEventListener("beforeunload", function(event) {
     // Code to execute when the page is about to be unloaded
     // You can also return a string to display a confirmation message to the user
     if(!allow_update){
         event.preventDefault(); // This is necessary for some browsers to display the confirmation dialog
-        cancel_new_note()
+        this.document.getElementById("all_notes").innerHTML = "";
         event.returnValue = ""; // This is necessary for some browsers to display the confirmation dialog
     }
 });
 
-function disable_add_btn(){
+function disable_create_new(){
     allow_update = false;
     document.getElementById("new_note_btn").disabled = true;
 }
 
-function enable_add_btn(){
+function enable_create_new(){
     allow_update = true;
     document.getElementById("new_note_btn").disabled = false;
 }
@@ -37,13 +37,13 @@ function _note(is_input, key="",heading="", tags="", content=""){
     if (is_input){
         return  `<div class="note card p-2">
         <div class="d-flex w-100 gap-1">
-            <input id="heading" class="border-0 w-50" type="text" placeholder="Heading" />
+            <input id="heading" oninput="add_btn_status()" class="border-0 w-50" type="text" placeholder="Heading" />
             <input id="tags" type="text" placeholder="Tags (comma separated)" class="border-0 w-50" />
         </div>
         <hr />
-        <p class="card-text"><textarea id="content" class="w-100"></textarea></p>
+        <p class="card-text"><textarea oninput="add_btn_status()" id="content" class="w-100"></textarea></p>
         <div class="d-flex gap-2">
-            <button onclick="add_new_note()" class="w-50 btn btn-dark">Add</button>
+            <button id="add_note_btn" onclick="add_new_note()" class="w-50 btn btn-dark">Add</button>
             <button onclick="cancel_new_note()" class="w-50 btn btn-dark">Cancel</button>
         </div>
     </div>`
@@ -69,6 +69,16 @@ function _note(is_input, key="",heading="", tags="", content=""){
     </div>
     `
     return html
+}
+
+function add_btn_status(){
+    let heading = document.getElementById("heading").value;
+    let content = document.getElementById("content").value;
+    if (!heading || !content){
+        document.getElementById("add_note_btn").disabled = true;
+    }else{
+        document.getElementById("add_note_btn").disabled = false;
+    }
 }
 
 function _shift(direction, start, end){
@@ -155,12 +165,13 @@ function add_box(id){
 
 function createNewNote(id=0){
     if(allow_update){
-        disable_add_btn();
+        disable_create_new();
         add_box(num_notes);
         cur_placements = {};
         _shift("foreward",num_notes,0)
         let box_0 = document.getElementById(id);
         box_0.innerHTML = _note(true);
+        add_btn_status()
     }
 }
 
@@ -168,7 +179,7 @@ async function add_new_note(){
     let heading = document.getElementById("heading").value;
     let tags = document.getElementById("tags").value;
     let content = document.getElementById("content").value;
-    tags = tags.split(",");
+    tags = tags? tags.split(",") : [];
     let data = {
         "name": heading, 
         "tags": tags, 
@@ -177,7 +188,7 @@ async function add_new_note(){
     let id = await db.add_note(data)
     if(id){
         add_note(0,`item_${id}`,heading,tags,content)
-        enable_add_btn()
+        enable_create_new()
         num_notes+=1;
     }
 }
@@ -195,7 +206,7 @@ function cancel_new_note(){
     cur_placements = {}
     _shift("backward",0,num_notes)
     document.getElementById(num_notes).remove();
-    enable_add_btn();
+    enable_create_new();
 }
 
 async function delete_note(key){
@@ -225,19 +236,20 @@ async function search_note(query){
             box.innerHTML = _note(false,`item_${key}`,record["name"],record["tags"],record["content"]);
         }
         document.getElementById('all_notes').innerHTML = "<div class='row row_last'></div><br/>";
-        disable_add_btn();
-        await db.search_note(query, callback);
+        disable_create_new();
+        allow_update = false;
+        db.search_note(query, callback);
 
     }else{
         clear_search_input()
-        enable_add_btn();
+        enable_create_new();
     }
 }
 
 function clear_search_input(){
     document.getElementById('all_notes').innerHTML = "<div class='row row_last'></div><br/>";
     document.getElementById("search").value = '';
-    show_all()
+    show_all(num_notes,cur_placements)
 }
 
 window.clear_search_input = clear_search_input
@@ -246,3 +258,4 @@ window.add_new_note = add_new_note
 window.cancel_new_note = cancel_new_note
 window.delete_note = delete_note
 window.search_note = search_note
+window.add_btn_status = add_btn_status

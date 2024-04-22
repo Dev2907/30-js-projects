@@ -1,53 +1,55 @@
 import Database from "../DB scripts/dbrequests.js";
 
-class notesDB extends Database {
-    
+class notesDB {
     /**
-     * Initializes the database and loads the specified object store.
-     * @param {function} success_callback - A callback function that will be called once the initialization is complete.
-     *                                          It will receive the number of notes from DB.
+     * Initializes the database and sets up the necessary indexes.
+     * @param {Function} success - A callback function to be executed once the initialization is complete.
      */
-    initialize = (success_callback)=>{
-        if(! localStorage.hasOwnProperty("cur_placement")){
-            localStorage.setItem("cur_placement",JSON.stringify({}))
-        }
-        
+    constructor(success) {
+        this.db = false;
         let obj_store = [
             {
-                "name": "all_notes",
-                "indexes" :[
+                name: "all_notes",
+                indexes: [
                     {
-                        "name":"tags",
-                        "keypath": "tags",
+                        name: "tags",
+                        keypath: "tags",
                     },
                     {
-                        "name":"name",
-                        "keypath": "name",
-                    }
+                        name: "name",
+                        keypath: "name",
+                    },
                 ],
-            }
+            },
         ];
-    
-        let success = async ()=>{
-            let num_notes = await this.countDB("notes","all_notes")
-            success_callback(num_notes)
-        }
-    
-        this.loadDB("notes",1, obj_store, success)
+
+        this.db = new Database("notes", 1, obj_store, () => {
+            this.initialize(success);
+        });
     }
 
     /**
-     * Retrieves a note from the database based on the provided query.
-     *
-     * @param {Object} query - An object containing the query parameters for retrieving the note.
-     * @returns {Promise<Object|null>} - A promise that resolves to the retrieved note if found, or null if not found.
-     * @throws {Error} - If an error occurs during the database operation.
+     * Initializes the database and sets up the necessary indexes.
+     * @param {Function} callback - A callback function to be executed once the initialization is complete.
      */
-    async get_note(query){
-        try{
-            let res = await this.getDB("notes","all_notes",query);
+    initialize = async (callback) => {
+        if (!localStorage.hasOwnProperty("cur_placements")) {
+            localStorage.setItem("cur_placements", JSON.stringify({}));
+        }
+        let num_notes = await this.db.countDB("all_notes");
+        callback(num_notes);
+    };
+
+    /**
+     * Retrieves a note from the database based on the provided query.
+     * @param {Object} query - An object containing the query parameters for the note search.
+     * @returns {Promise<Object|null>} - A promise that resolves to the retrieved note object or null if the note is not found.
+     */
+    async get_note(query) {
+        try {
+            let res = await this.db.getDB("all_notes", query);
             return res;
-        }catch(error){
+        } catch (error) {
             console.log(error);
             return null;
         }
@@ -55,28 +57,29 @@ class notesDB extends Database {
 
     /**
      * Adds a new note to the database.
-     * @param {Object} data - The data of the new note to be added.
-     * @returns {Promise<Object|null>} - A promise that resolves to the id of added note if successful, or null if an error occurs during the database operation.
+     * @param {Object} data - An object containing the data for the new note.
+     * @returns {Promise<Object|null>} - A promise that resolves to the added note object or null if the addition fails.
      */
-    async add_note(data){
-        try{
-            let res = await this.addDB("notes","all_notes",data);
+    async add_note(data) {
+        try {
+            let res = await this.db.addDB("all_notes", data);
             return res;
-        }catch(error){
+        } catch (error) {
             console.log(error);
             return null;
         }
     }
+
     /**
      * Deletes a note from the database based on the provided key.
-     * @param {string} key - The key of the note to be deleted.
-     * @returns {Promise<number>} - A promise that resolves to 1 if the note is successfully deleted, or 0 if an error occurs during the database operation.
+     * @param {string} key - The unique key of the note to be deleted.
+     * @returns {Promise<Object|null>} - A promise that resolves to the deleted note object or null if the deletion fails.
      */
-    async delete_note(key){
-        try{
-            let res = await this.deleteDB("notes","all_notes",key);
+    async delete_note(key) {
+        try {
+            let res = await this.db.deleteDB("all_notes", key);
             return res;
-        }catch(error){
+        } catch (error) {
             console.log(error);
             return null;
         }
@@ -84,45 +87,47 @@ class notesDB extends Database {
 
     /**
      * Searches for a note in the database based on the provided query.
-     *
-     * @param {string} query - The query to search for in the note's tags, name, or content.
-     * @param {function} callback - A callback function that will be called for each matching note.
-     *                                  It will receive the key and the note object as arguments.
-     * @returns {1|null} - 1 on successfull completion, null on failure
+     * @param {string} query - The search query to be used for finding the note.
+     * @param {Function} callback - A callback function to be executed once the search is complete. The callback function receives the key and the note object as arguments.
+     * @returns {Promise<number>} - A promise that resolves to 1 if the search is successful, or null if an error occurs.
      */
-    async search_note(query,callback){
-        try{
-            let cursor_call = (cursor,done) => {
-                if(done){
+    search_note(query, callback) {
+        try {
+            let cursor_call = (cursor, done) => {
+                if (done) {
                     let record = cursor.value;
-                    if (record.tags.includes(query) || record.name.toLowerCase().includes(query.toLowerCase()) || record.content.includes(query)){
-                        callback(cursor.key,record);   
+                    if (
+                        record.tags.includes(query) ||
+                        record.name
+                            .toLowerCase()
+                            .includes(query.toLowerCase()) ||
+                        record.content.includes(query)
+                    ) {
+                        callback(cursor.key, record);
                     }
-                }else{
-                    console.log("All records iterated")
+                } else {
+                    console.log("All records iterated");
                 }
-            }
-            await this.cursorDB("notes","all_notes",cursor_call)
+            };
+            this.db.cursorDB("all_notes", cursor_call); 
             return 1;
-
-        }catch(error){
+        } catch (error) {
             console.log(error);
             return null;
         }
     }
 
     /**
-     * Sets a value in the localStorage with the specified key and value.
-     *
+     * Sets a value in the localStorage with the provided key and value.
      * @param {string} key - The key to store the value under.
      * @param {any} val - The value to be stored.
-     * @returns {number} - Returns 1 if the operation is successful, 0 otherwise.
+     * @returns {number} - 1 if the operation is successful, 0 otherwise.
      */
-    setLS(key, val){
-        try{
-            localStorage.setItem(key, JSON.stringify(val))
+    setLS(key, val) {
+        try {
+            localStorage.setItem(key, JSON.stringify(val));
             return 1;
-        }catch{
+        } catch {
             console.log(error);
             return 0;
         }
