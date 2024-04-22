@@ -33,11 +33,12 @@ class notesDB {
      * @param {Function} callback - A callback function to be executed once the initialization is complete.
      */
     initialize = async (callback) => {
-        if (!localStorage.hasOwnProperty("cur_placements")) {
-            localStorage.setItem("cur_placements", JSON.stringify({}));
+        if (!localStorage.hasOwnProperty("note_placements")) {
+            localStorage.setItem("note_placements", JSON.stringify({}));
         }
         let num_notes = await this.db.countDB("all_notes");
-        callback(num_notes);
+        let cur_placements = this.getplacement();
+        callback(num_notes,cur_placements);
     };
 
     /**
@@ -94,7 +95,7 @@ class notesDB {
     search_note(query, callback) {
         try {
             let cursor_call = (cursor, done) => {
-                if (done) {
+                if (!done) {
                     let record = cursor.value;
                     if (
                         record.tags.includes(query) ||
@@ -123,15 +124,25 @@ class notesDB {
      * @param {any} val - The value to be stored.
      * @returns {number} - 1 if the operation is successful, 0 otherwise.
      */
-    setLS(key, val) {
+    setplacement(val) {
         try {
-            localStorage.setItem(key, JSON.stringify(val));
+            localStorage.setItem('note_placements', JSON.stringify(val));
             return 1;
         } catch {
             console.log(error);
             return 0;
         }
     }
+
+    getplacement(){
+        try {
+            return JSON.parse(localStorage.getItem('note_placements'))
+        } catch {
+            console.log(error);
+            return 0;
+        }
+    }
+
 }
 
 export default notesDB;

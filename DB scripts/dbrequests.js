@@ -70,7 +70,6 @@ class Database {
                                     : object_store.createIndex(
                                           index["name"],
                                           index["keypath"],
-                                          index["options"]
                                       );
                             }
                         }
@@ -192,11 +191,11 @@ class Database {
             req.onsuccess = async (event) => {
                 let cursor = event.target.result;
                 if (cursor) {
-                    callback(cursor, true);
+                    callback(cursor, false);
                     cursor.continue();
                 } else {
                     resolve(1);
-                    callback(null, false);
+                    callback(null, true);
                 }
             };
             req.onerror = (event) => {
@@ -222,6 +221,37 @@ class Database {
                     `Counted DB : ${this.dbname}, Store : ${storename}`
                 );
             };
+            req.onerror = (event) => {
+                console.log(`DB Error: ${event.target.errorCode}`);
+                reject(null);
+            };
+        });
+    }
+
+    async updateVal(storename, id, vals){
+        return new Promise((resolve, reject) => {
+            let transaction = this.db.transaction([storename], "readwrite");
+            let objstore = transaction.objectStore(storename);
+            let req = objstore.get(parseInt(id));
+            req.onsuccess = (event) => {
+                let data = event.target.result;
+                debugger;
+                for(let key in vals){
+                    if(data.hasOwnProperty(key)){
+                        data[key] = vals[key];
+                    }
+                }
+                // data["id"] = id;
+                let putreq = objstore.put(data,id);
+                putreq.onsuccess = (event) => {
+                    console.log(`record ${id} updated with vals: ${vals}`)
+                    resolve(1)
+                }
+                putreq.onerror = (event) => {
+                    console.log(`DB Error: ${event.target.errorCode}`);
+                    reject(null);
+                }
+            }
             req.onerror = (event) => {
                 console.log(`DB Error: ${event.target.errorCode}`);
                 reject(null);
