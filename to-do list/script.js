@@ -4,10 +4,9 @@ import taskDB from "./DB.js"
 let db = null
 let num_tasks = null;
 window.onload = function(){
-    // check_task_list();
-    let success = (val) =>{
+    let success = async (val) =>{
         num_tasks = val
-        displaytask()
+        await displaytask()
         drag_task_list = document.querySelectorAll('.item')
         let box = document.querySelectorAll('.box')
         drag_task_list.forEach((element)=>{
@@ -25,6 +24,16 @@ window.onload = function(){
     }
 
     db = new taskDB(success);
+}
+
+function _task(key,name,completed){
+    let html =  `<div class="box w-100 "></div>
+                <div draggable="true" id="${key}" class="item d-flex justify-content-between my-2">
+                    <div id="task_done_but_${key}" class="me-2 rounded-circle ${completed? "add_button" : ""}"><button onclick="${completed? `task_undone(${key})` : `task_done('${key}')`}" class="${completed? 'add_button border-0 text-white rounded-circle fa-solid fa-check': 'bg-white border-0 fa-regular fa-circle'}"></button></div>
+                    <div id="task_name_${key}" class="flex-fill w-75 task_name ${completed? 'text-decoration-line-through':''}">${name}</div>
+                    <div><button onclick="delete_task('${key}')" class="bg-white border-0 fa-solid fa-xmark"></button></div>
+                </div>`
+    return html;
 }
 
 function add_dragabble_event(element){
@@ -66,31 +75,12 @@ function add_box_event(element){
     })
 }
 
-function check_task_list(){
-    if (! localStorage.hasOwnProperty("task_list") || ! Array.isArray(JSON.parse(localStorage.getItem("task_list"))) ){
-        task_list = [];
-        localStorage.setItem("task_list",JSON.stringify(task_list));
-    }
-}
-
 async function addtask(){
-    // check_task_list();
-    // let task_list = JSON.parse(localStorage.getItem("task_list"));
     let task = document.getElementById("task");
     if (task.value != ""){
-        
         num_tasks+=1
         let task_id = await db.add_task({"task": task.value, "is_done": false})
-        // task_list.push({"id": task_id,"task": task.value, "is_done": false});
-        // localStorage.setItem("task_list",JSON.stringify(task_list));
-        let html = `
-                    <div id="${task_id}" draggable="true" class="item d-flex justify-content-between my-2">
-                        <div id="task_done_but_${task_id}" class="me-2 rounded-circle"><button onclick="task_done('${task_id}')" class="bg-white border-0 fa-regular fa-circle"></button></div>
-                        <div id="task_name_${task_id}" class="flex-fill w-75 task_name">${task.value}</div>
-                        <div><button onclick="delete_task('${task_id}')" class="bg-white border-0 fa-solid fa-xmark"></button></div>
-                    </div>
-                    <div class="box w-100 "></div>`
-        document.getElementById("task_list").innerHTML += html
+        document.getElementById("task_list").innerHTML += _task(task_id,task.value,false)
         task.value = "";
     }
 }
@@ -99,21 +89,7 @@ async function displaytask(){
     let task_list = await db.get_tasks()
     let html = "";
     for(let i = 0; i < task_list.length; i+=1){
-        if (! task_list[i].value.is_done){
-            html += `<div class="box w-100"></div>
-                    <div draggable="true" id="${task_list[i].key}" class="item d-flex justify-content-between my-2">
-                        <div id="task_done_but_${task_list[i].key}" class="me-2 rounded-circle"><button onclick="task_done('${task_list[i].key}')" class="bg-white border-0 fa-regular fa-circle"></button></div>
-                        <div id="task_name_${task_list[i].key}" class="flex-fill w-75 task_name">${task_list[i].value.task}</div>
-                        <div><button onclick="delete_task('${task_list[i].key}')" class="bg-white border-0 fa-solid fa-xmark"></button></div>
-                    </div>`
-        }else{
-            html += `<div class="box w-100 "></div>
-                    <div draggable="true" id="${task_list[i].key}" class="item d-flex justify-content-between my-2">
-                        <div id="task_done_but_${task_list[i].key}" class="me-2 rounded-circle add_button"><button onclick="task_undone('${task_list[i].key}')" class="add_button border-0 text-white rounded-circle fa-solid fa-check"></button></div>
-                        <div id="task_name_${task_list[i].key}" class="flex-fill w-75 task_name text-decoration-line-through">${task_list[i].value.task}</div>
-                        <div><button onclick="delete_task('${task_list[i].key}')" class="bg-white border-0 fa-solid fa-xmark"></button></div>
-                    </div>`
-        }
+        html += _task(task_list[i].key, task_list[i].value.task, task_list[i].value.is_done);
         if (i == task_list.length - 1) {
             html += `<div class="box w-100"></div>`
         }
@@ -143,18 +119,18 @@ async function task_undone(id){
     }
 }
 
-function delete_task(id){
-    let task_list = JSON.parse(localStorage.getItem("task_list"))
-    task_list.splice(Number(id),1)
-    localStorage.setItem("task_list",JSON.stringify(task_list))
+async function delete_task(id){
+    await db.delete_task(parseInt(id));
     displaytask()
 }
 
 function clear_all(){
-    localStorage.setItem("task_list",JSON.stringify([]));
+    db.delete_all_tasks()
     displaytask()
 }
 
 window.addtask = addtask
 window.task_done = task_done
 window.task_undone = task_undone
+window.delete_task = delete_task
+window.clear_all = clear_all

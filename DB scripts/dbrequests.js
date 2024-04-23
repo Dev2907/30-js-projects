@@ -69,7 +69,7 @@ class Database {
                                       )
                                     : object_store.createIndex(
                                           index["name"],
-                                          index["keypath"],
+                                          index["keypath"]
                                       );
                             }
                         }
@@ -228,30 +228,59 @@ class Database {
         });
     }
 
-    async updateVal(storename, id, vals){
+    /**
+     * Updates an existing record in the database.
+     * @param {string} storename - The name of the object store.
+     * @param {number} id - The primary key of the record to update.
+     * @param {Object} vals - The key/value pairs to update in the record.
+     * @returns {Promise.<number>} A status code indicating success (1) or failure (0).
+     */
+    async updateVal(storename, id, vals) {
         return new Promise((resolve, reject) => {
             let transaction = this.db.transaction([storename], "readwrite");
             let objstore = transaction.objectStore(storename);
             let req = objstore.get(parseInt(id));
             req.onsuccess = (event) => {
                 let data = event.target.result;
-                debugger;
-                for(let key in vals){
-                    if(data.hasOwnProperty(key)){
+                for (let key in vals) {
+                    if (data.hasOwnProperty(key)) {
                         data[key] = vals[key];
                     }
                 }
                 // data["id"] = id;
-                let putreq = objstore.put(data,id);
+                let putreq = objstore.put(data, id);
                 putreq.onsuccess = (event) => {
-                    console.log(`record ${id} updated with vals: ${vals}`)
-                    resolve(1)
-                }
+                    console.log(`record ${id} updated with vals: ${vals}`);
+                    resolve(1);
+                };
                 putreq.onerror = (event) => {
                     console.log(`DB Error: ${event.target.errorCode}`);
                     reject(null);
-                }
-            }
+                };
+            };
+            req.onerror = (event) => {
+                console.log(`DB Error: ${event.target.errorCode}`);
+                reject(null);
+            };
+        });
+    }
+
+    /**
+     * Clears all records from an IndexedDB database.
+     * @param {string} storename - The name of the object store.
+     * @returns {Promise.<number>} A status code indicating success (1) or failure (0).
+     */
+    async clearall(storename) {
+        return new Promise((resolve, reject) => {
+            let transaction = this.db.transaction([storename], "readwrite");
+            let objstore = transaction.objectStore(storename);
+            let req = objstore.clear();
+            req.onsuccess = (event) => {
+                console.log(
+                    `DB : ${this.dbname}, Store : ${storename} cleared`
+                );
+                resolve(1);
+            };
             req.onerror = (event) => {
                 console.log(`DB Error: ${event.target.errorCode}`);
                 reject(null);

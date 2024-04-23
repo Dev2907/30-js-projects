@@ -67,6 +67,26 @@ class taskDB {
             return null;
         }
     }
+
+    async delete_task(id){
+        try{
+            let res = await this.db.deleteDB("all_tasks", id);
+            return res;
+        }catch(error){
+            console.log(error);
+            return null;
+        }
+    }
+
+    async delete_all_tasks(){
+        try{
+            let res = await this.db.clearall("all_tasks");
+            return res;
+        }catch(error){
+            console.log(error);
+            return null;
+        }
+    }
 }
 
 export default taskDB;
