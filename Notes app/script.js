@@ -5,9 +5,9 @@ let num_notes = null;
 let cur_placements = {}
 let allow_update=true;
 window.onload = ()=>{
-    let success =(val)=>{
-        cur_placements = JSON.parse(localStorage.getItem("cur_placements"));
-        num_notes = val
+    let success =(notes,placements )=>{
+        cur_placements = placements;
+        num_notes = notes
         console.log(`Current Number of Notes : ${num_notes}`);
         show_all(num_notes,cur_placements);
     }
@@ -97,7 +97,7 @@ function _shift(direction, start, end){
             cur_placements[cur_box.id] = cur_box.firstElementChild.id;
         }
     }
-    db.setLS("cur_placements",cur_placements);
+    db.setplacement(cur_placements);
 }
 
 function add_draggable_event(node){
@@ -129,7 +129,7 @@ function add_box_event(node){
         target_box.appendChild(prev_note);
         cur_placements[prev_box.id] = target_note.id;
         cur_placements[target_box.id]  = prev_note.id;
-        db.setLS("cur_placements",cur_placements)
+        db.setplacement(cur_placements)
     })
 }
 
@@ -198,7 +198,7 @@ function add_note(box_id,key,heading, tags, content) {
     box.innerHTML = _note(false,key,heading,tags,content);
     add_draggable_event(box.firstElementChild)
     cur_placements[box_id] = key;
-    db.setLS("cur_placements",cur_placements);
+    db.setplacement(cur_placements);
 }
 
 function cancel_new_note(){
