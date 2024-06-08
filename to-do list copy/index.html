@@ -14,11 +14,15 @@
             <div class="bg-white col-sm-5 m-auto px-4 py-4 rounded task_content d-flex flex-column gap-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex gap-2 align-items-center">
-                        <div class="fs-1">9</div>
+                        <div class="fs-1" id="datepicker_date" >9</div>
                         <div>
-                            <div>May</div>
-                            <div>2024</div>
+                            <div id="datepicker_month">May</div>
+                            <div id="datepicker_year">2024</div>
                         </div>
+                        <button id="DatePicker" class="datepicker-native btn btn-outline-secondary btn-sm rounded-circle">
+                            <i class="fa-regular fa-calendar"></i>
+                            <input type="date" class="datepicker-native-input" onchange="handleDatePicker(event)" />
+                        </button>
                     </div>
                     <div class="fs-5">Thursday</div>
                 </div>
