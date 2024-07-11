@@ -42,6 +42,5 @@ function update_page(weather_data){
       img_url = "./images/clear.png"
       break;
   }
-  debugger;
   document.getElementById("weather_icon").src = img_url
 }

@@ -5,7 +5,7 @@ class taskDB {
         this.db = false;
         let obj_store = [
             {
-                name: "all_tasks",
+                name: "task_list",
                 indexes: [
                     {
                         name: "is_done",
@@ -19,19 +19,19 @@ class taskDB {
             },
         ];
 
-        this.db = new Database("tasks", 1, obj_store, () => {
+        this.db = new Database("tasks_list", 1, obj_store, () => {
             this.initialize(success);
         });
     }
 
     async initialize(callback) {
-        let num_tasks = await this.db.countDB("all_tasks");
+        let num_tasks = await this.db.countDB("task_list");
         callback(num_tasks);
     }
 
     async add_task(data) {
         try {
-            let res = await this.db.addDB("all_tasks", data);
+            let res = await this.db.addDB("task_list", data);
             return res;
         } catch (error) {
             console.log(error);
@@ -49,7 +49,7 @@ class taskDB {
                     console.log("All records iterated");
                 }
             };
-            await this.db.cursorDB("all_tasks", cursor_call);
+            await this.db.cursorDB("task_list", cursor_call);
             return task_list;
         } catch (error) {
             console.log(error);
@@ -60,7 +60,7 @@ class taskDB {
     async update_task_status(id, val) {
         try {
             let rec = { is_done: val };
-            await this.db.updateVal("all_tasks", parseInt(id), rec);
+            await this.db.updateVal("task_list", parseInt(id), rec);
             return 1;
         } catch (error) {
             console.log(error);
@@ -70,7 +70,7 @@ class taskDB {
 
     async delete_task(id){
         try{
-            let res = await this.db.deleteDB("all_tasks", id);
+            let res = await this.db.deleteDB("task_list", id);
             return res;
         }catch(error){
             console.log(error);
@@ -78,9 +78,9 @@ class taskDB {
         }
     }
 
-    async delete_all_tasks(){
+    async delete_task_list(){
         try{
-            let res = await this.db.clearall("all_tasks");
+            let res = await this.db.clearall("task_list");
             return res;
         }catch(error){
             console.log(error);

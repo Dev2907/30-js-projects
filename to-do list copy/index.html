@@ -21,30 +21,43 @@
                         </div>
                         <button id="DatePicker" class="datepicker-native btn btn-outline-secondary btn-sm rounded-circle">
                             <i class="fa-regular fa-calendar"></i>
-                            <input type="date" class="datepicker-native-input" onchange="handleDatePicker(event)" />
+                            <input type="date" class="datepicker-native-input" id="datepicker" onchange="handleDatePicker(event)" />
                         </button>
                     </div>
-                    <div class="fs-5">Thursday</div>
+                    <div class="fs-5" id="datepicker_day">Thursday</div>
                 </div>
                 <hr class="m-0 p-0"/>
                 <div id="task_list">
-                    <div class="fs-6 d-flex"><div class="flex-fill">Complete Project</div>
-                        <div class="d-flex gap-2">
-                            <div><i class="fa-solid fa-trash"></i></div>
-                            <div><i class="fa-regular fa-circle-check"></i></div>
+                    <div id="box_1" class="box p-1" ondrop="drop(event)" ondragover="dragover(event)" ondragover="dragleave(event)">
+                        <div id="task_1" draggable="true" ondragstart="drag(event)" class="task fs-6 d-flex">
+                            <div class="flex-fill">Complete Project</div>
+                            <div class="d-flex gap-2">
+                                <div><i class="fa-solid fa-trash"></i></div>
+                                <div><i class="fa-regular fa-circle-check"></i></div>
+                            </div>
                         </div>
                     </div>
                     <br/>
-                    <div class="fs-6 d-flex text-secondary"><div class="flex-fill">Complete Project</div>
-                        <div class="d-flex gap-2">
-                            <div><i class="fa-solid fa-trash"></i></div>
-                            <div><i class="fa-solid fa-circle-check text-success"></i></div>
+                    <div id="box_2" class="box p-1" ondrop="drop(event)" ondragover="dragover(event)" ondragover="dragleave(event)">
+                        <div id="task_2" draggable="true" ondragstart="drag(event)" class="task fs-6 d-flex text-secondary">
+                            <div class="flex-fill">Complete Project</div>
+                            <div class="d-flex gap-2">
+                                <div><i class="fa-solid fa-trash"></i></div>
+                                <div><i class="fa-solid fa-circle-check text-success"></i></div>
+                            </div>
                         </div>
                     </div>
+                    <br/>
+                </div>
+                <div class="text-center justify-content-center d-flex gap-1">
+                    <div class="input-group">
+                        <input id="task-input" type="text" class="form-control border border-dark-subtle" >
+                    </div>  
+                    <button type="button" class="btn btn btn-outline-success" onclick="add_task()">Add</button>
                 </div>
             </div>
             <div class="col-sm-2"></div>
         </div>
-            <script type="module" src="./script.js"></script>
+        <script type="module" src="./script.js"></script>
     </body>
 </html>

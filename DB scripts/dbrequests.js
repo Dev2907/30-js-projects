@@ -52,7 +52,7 @@ class Database {
                     for (let i = 0; i < obj_stores.length; i += 1) {
                         let object_store = db.createObjectStore(
                             obj_stores[i]["name"],
-                            { KeyPath: "id", autoIncrement: true }
+                            { keyPath: "id", autoIncrement: true }
                         );
                         if (obj_stores[i]["indexes"].length > 0) {
                             for (
@@ -90,42 +90,80 @@ class Database {
      * @param {Int} query - The key or key range to use for the get operation.
      * @returns {Promise.<Object>} The item, or null if not found.
      */
-    async getDB(storename, query) {
+    async getDB(storename, key, query) {
         return new Promise((resolve, reject) => {
             let transaction = this.db.transaction([storename], "readonly");
             let objstore = transaction.objectStore(storename);
-            let req = objstore.get(query);
-            req.onsuccess = async (event) => {
-                resolve(event.target.result);
-                console.log(
-                    `Queried DB : ${this.dbname}, Store : ${storename}, for Query : ${query} `
-                );
-            };
-            req.onerror = (event) => {
-                console.log(`DB Error: ${event.target.errorCode}`);
-                reject(null);
-            };
+            let req;
+            if (key) {
+                let index = objstore.index(key);
+                req = index.get(query); // This should be outside the onsuccess handler
+    
+                req.onsuccess = (event) => {
+                    resolve(event.target.result);
+                    console.log(
+                        `Queried DB : ${this.dbname}, Store : ${storename}, for Query : ${query} `
+                    );
+                };
+    
+                req.onerror = (event) => {
+                    console.log(`DB Error: ${event.target.errorCode}`);
+                    reject(null);
+                };
+            } else {
+                req = objstore.get(query);
+    
+                req.onsuccess = (event) => {
+                    resolve(event.target.result);
+                    console.log(`All records for DB : ${this.dbname} queried`);
+                };
+    
+                req.onerror = (event) => {
+                    console.log(`DB Error: ${event.target.errorCode}`);
+                    reject(null);
+                };
+            }
         });
     }
-
+    
     /**
      * Gets all items from an IndexedDB database.
      * @param {string} storename - The name of the object store.
+     * @param {string} key - The name of the index key (optional).
+     * @param {string} query - The query to serch from index key (optional).
      * @returns {Promise.<Object[]>} The items.
      */
-    async getAllDB(storename) {
+    async getAllDB(storename, key ,query) {
         return new Promise((resolve, reject) => {
             let transaction = this.db.transaction([storename], "readonly");
             let objstore = transaction.objectStore(storename);
-            let req = objstore.getAll();
-            req.onsuccess = async (event) => {
-                resolve(event.target.result);
-                console.log(`All record for DB : ${this.dbname} queried`);
-            };
-            req.onerror = (event) => {
-                console.log(`DB Error: ${event.target.errorCode}`);
-                reject(null);
-            };
+            let req;
+            if (query && key) {
+                let index = objstore.index(key);
+                req = index.getAll(query); // This should be outside the onsuccess handler
+    
+                req.onsuccess = (event) => {
+                    resolve(event.target.result);
+                    console.log(`All records for DB : ${this.dbname} queried`);
+                };
+    
+                req.onerror = (event) => {
+                    console.log(`DB Error: ${event.target.errorCode}`);
+                    reject(null);
+                };
+            } else {
+                req = objstore.getAll();
+    
+                req.onsuccess = (event) => {
+                    resolve(event.target.result);
+                    console.log(`All records for DB : ${this.dbname} queried`);
+                };
+    
+                req.onerror = (event) => {
+                    console.log(`DB Error: ${event.target.errorCode}`);
+                    reject(null);
+                };
+            }
         });
     }
 
@@ -141,7 +179,8 @@ class Database {
             let objstore = transaction.objectStore(storename);
             let req = objstore.add(data);
             req.onsuccess = async (event) => {
-                resolve(event.target.result);
+                let res = await event.target.result;
+                resolve(res);
                 console.log(
                     `Added Data : ${data} to DB : ${this.dbname}, Store : ${storename}`
                 );
@@ -210,15 +249,22 @@ class Database {
      * @param {string} storename - The name of the object store.
      * @returns {Promise.<number>} The number of items in the object store.
      */
-    async countDB(storename) {
+    async countDB(storename, key, query) {
         return new Promise((resolve, reject) => {
             let transaction = this.db.transaction([storename], "readonly");
             let objstore = transaction.objectStore(storename);
-            let req = objstore.count();
+            let req;
+            if (query){
+                let index = objstore.index(key)
+                query = IDBKeyRange.only(query);
+                req = index.count(query);
+            }else{
+                req = objstore.count();
+            }
             req.onsuccess = async (event) => {
                 resolve(event.target.result);
                 console.log(
-                    `Counted DB : ${this.dbname}, Store : ${storename}`
+                    `Counted DB : ${this.dbname}, Store : ${storename}, Query ${query}`
                 );
             };
             req.onerror = (event) => {
