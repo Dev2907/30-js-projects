@@ -72,10 +72,65 @@ class taskDB {
         }
     }
 
-    async delete_task(id){
+    async update_multiple(rec){
+        let cursor_call = (cursor, done) => {
+            if (!done){
+                let data = cursor.value;
+                let id = data.id;
+                if (rec.hasOwnProperty(id)){
+                    for (let key in rec[id]){
+                        data[key] = rec[id][key]
+                    }
+                    cursor.update(data);
+                }
+            }
+        }
         try{
-            let res = await this.task_main_db.deleteDB("all_tasks", id);
-            return res;
+            this.db.cursorDB("all_tasks", cursor_call);
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+    async delete_task(id, mapping){
+        try{
+            id = parseInt(id)
+            let errorcall = (ev) => {
+                console.log(`DB Error: ${ev.target.errorCode}`);
+                transaction.abort();
+                return false;
+            }
+
+            let val = this.task_main_db._transaction("all_tasks");
+            let transaction = val[0];
+            let store = val[1];
+
+            let req = store.get(id);
+            req.onsuccess = (event) =>{
+                let record = event.target.result;
+                if(record){
+                    let deleteRequest = objectStore.delete(id);
+
+                    deleteRequest.onsuccess = function(event) {
+                        for (let task in mapping){
+                            let task_id = parseInt(task.match(/\d+$/));
+                            let getreq =  store.get(task_id);
+                            getreq.onsuccess = (event) => {
+                                let data = event.target.result;
+                                if (data){
+                                    data['box_id'] = mapping[task]
+                                    let putreq = store.put(data);
+                                    putreq.onerror = errorcall(event)
+                                }
+                            }
+                            getreq.onerror = errorcall(event);
+                        }
+                    };
+                    
+                    deleteRequest.onerror = errorcall(event);
+                }
+            }
+            req.onerror = errorcall(event);
         }catch(error){
             console.log(error);
             return null;
@@ -92,57 +147,6 @@ class taskDB {
         }
     }
 
-    // search_placement(query, callback) {
-    //     try {
-    //         let cursor_call = (cursor, done) => {
-    //             if (!done) {
-    //                 let record = cursor.value;
-    //                 if (record['date'] == query) {
-    //                     callback(cursor.key, record);
-    //                 }
-    //             } else {
-    //                 console.log("All records iterated");
-    //             }
-    //         };
-    //         this.task_main_db.cursorDB("task_placement", cursor_call); 
-    //         return 1;
-    //     } catch (error) {
-    //         console.log(error);
-    //         return null;
-    //     }
-    // }
-
-    // setplacement(val) {
-    //     try {
-    //         let k;
-    //         this.search_placement(val['date'],(key, record)=>{
-    //             k = key;
-    //         })
-    //         if (!k){
-    //             this.task_main_db.addDB("task_placement", {
-    //                 "date" : val['date'],
-    //                 "placement": val["placement"]
-    //             })
-    //         }else{
-    //             this.task_main_db.updateVal("task_placement", k, {
-    //                 "placement": val["placement"]
-    //             })
-    //         }
-    //     } catch {
-    //         console.log(error);
-    //         return 0;
-    //     }
-    // }
-
-    // async getplacement(){
-    //     try {
-    //         let res = await this.task_main_db.getAllDB("task_placement")
-    //         return res
-    //     } catch {
-    //         console.log(error);
-    //         return 0;
-    //     }
-    // }
 }
 
 export default taskDB;

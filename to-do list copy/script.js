@@ -17,13 +17,13 @@ let months = {
     11: 'Dec'
 }
 let days = {
-    0: 'Monday',
-    1: 'Tuesday',
-    2: 'Wednesday',
-    3: "Thursday",
-    4: "Friday",
-    5: "Saturday",
-    6: "Sunday"
+    0: 'Sunday',
+    1: 'Monday',
+    2: 'Tuesday',
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday"
 }
 
 window.onload = () =>{
@@ -35,6 +35,11 @@ window.onload = () =>{
         show_all(num_tasks);
     }
     db = new taskDB(success, document.getElementById("datepicker").value);
+    document.getElementById("task-input").addEventListener('keypress', (event)=>{
+        if(event.key == "Enter"){
+            add_task();
+        }
+    })
 }
 
 async function handleDatePicker(ev){
@@ -54,10 +59,13 @@ function changeDate(dt){
 
 function dragover(ev) {
     ev.preventDefault();
-    ev.target.classList.add('dropover');
+    if(ev.target.classList.contains("box")){
+        ev.target.classList.add('dropover');
+    }
 }
 
 function dragleave(ev){
+    ev.preventDefault();
     ev.target.classList.remove('dropover')
 }
 
@@ -73,27 +81,33 @@ function drop(ev) {
     let task1 = document.getElementById(ev.dataTransfer.getData("task"))
     let box2 =  ev.target.closest('.box')
     let task2 = box2.firstElementChild;
+    let task1_id = task1.id.match(/\d+$/)[0];
+    let task2_id = task2.id.match(/\d+$/)[0];
+    db.update_task(task1_id,{"box_id":box2.id})
+    db.update_task(task2_id,{"box_id":box1.id})
     box1.removeChild(task1);
     box1.appendChild(task2);
     box2.appendChild(task1);
 }
 
 function _note(id, task, done){
-    return `<div id="box_${id}" class="box p-1" ondrop="drop(event)" ondragover="dragover(event)" ondragover="dragleave(event)">
-                        <div id="task_${id}" draggable="true" ondragstart="drag(event)" class="task fs-6 d-flex ${done?'text-secondary' : ''}">
+    return `<div id="task_${id}" draggable="true" ondragstart="drag(event)" class="task fs-6 d-flex ${done?'text-secondary' : ''}">
                             <div class="flex-fill">${task}</div>
                             <div class="d-flex gap-2">
-                                <div><i class="fa-solid fa-trash"></i></div>
-                                <div><i class="fa-circle-check ${done?'text-success fa-solid' : 'fa-regular'}"></i></div>
+                                <div class="delete-btn"><i class="fa-solid fa-trash"></i></div>
+                                <div class="task-status"><i class="fa-circle-check ${done?'text-success fa-solid' : 'fa-regular'}"></i></div>
                             </div>
-                        </div>
-                    </div>`
+                        </div>`
 }
 
 async function add_box(id){
     let task_list = document.getElementById("task_list");
     let new_box = document.createElement('div')
     new_box.id = id;
+    new_box.classList.add('box');
+    new_box.addEventListener("drop", (e)=>{e.stopPropagation();drop(e)})
+    new_box.addEventListener("dragover", (e)=>{e.stopPropagation();dragover(e)})
+    new_box.addEventListener("dragleave", (e)=>{e.stopPropagation();dragleave(e)})
     task_list.appendChild(new_box);
     return new_box;
 }
@@ -112,6 +126,7 @@ async function add_task_db(task, done, date, box_id){
 async function add_task_display(task, done, box_id, task_id){
     let box = document.getElementById(box_id);
     box.innerHTML = _note(task_id, task, done);
+    box.querySelector(".delete-btn").addEventListener('click', () => delete_task(`task_${task_id}`))
     return box;
 }
 
@@ -120,7 +135,7 @@ async function add_task(){
     let date = document.getElementById("datepicker").value;
     let box_id = `box_${num_tasks+1}`;
     let box = add_box(box_id);
-    let task_id = add_task_db(task_input.value,false,date,box_id);
+    let task_id = await add_task_db(task_input.value,false,date,box_id);
     add_task_display(task_input.value,false,box_id,task_id);
     task_input.value = "";
     num_tasks++;
@@ -136,6 +151,34 @@ async function show_all(){
     for (let i = 0; i < num_tasks; i+=1){
         add_task_display(tasks[i]["name"], tasks[i]["is_done"], tasks[i]["box_id"], tasks[i]["id"])
     }
+}
+
+async function delete_task(id){
+    let task = document.getElementById(id);
+    let box = task.parentElement;
+    let val = delete_task_display(box, task);
+    db.delete_task(id.match(/\d+$/)[0],val["mapping"]);
+}
+
+
+function delete_task_display(box, task){
+    let box1_id = parseInt(box.id.match(/\d+$/)[0]);
+    let new_mapping = {}
+    for (let i = box1_id+1; i < num_tasks; i++){
+        let box = document.getElementById(`box_${i}`);
+        let t = box.firstChild;
+        new_mapping[t.id] = box.id;
+        box.id = `box_${i-1}`
+    }
+    box.remove();
+    return {
+        "task": task.id,
+        "mapping": new_mapping
+    };
+}
+
+async function update_task(id, data){
+    return await db.update_task(id, data);
 }
 
 window.add_task = add_task

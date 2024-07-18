@@ -293,8 +293,7 @@ class Database {
                         data[key] = vals[key];
                     }
                 }
-                // data["id"] = id;
-                let putreq = objstore.put(data, id);
+                let putreq = objstore.put(data);
                 putreq.onsuccess = (event) => {
                     console.log(`record ${id} updated with vals: ${vals}`);
                     resolve(1);
@@ -332,6 +331,12 @@ class Database {
                 reject(null);
             };
         });
+    }
+
+    _transaction(storename){
+        let transaction = this.db.transaction([storename],"readwrite")
+        let objectStore = transaction.objectStore(storename); 
+        return [transaction, objectStore]
     }
 }
 
