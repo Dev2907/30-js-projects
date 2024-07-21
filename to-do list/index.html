@@ -11,35 +11,33 @@
     <body class="body_background m-0 d-flex justify-content-center">
         <div class="row w-100">
             <div class="col-sm-2"></div>
-            <div class="bg-white col-sm-5 m-auto px-4 py-5 rounded task_content d-flex flex-column gap-3">
-                <div class="d-flex align-items-center">
-                    <h4 class="fa-solid fa-list me-1"></h4>
-                    <h4 class="flex-fill"> To-Do list</h4> 
-                    <div class="mouse_hover" onclick="clear_all()">Clear all<button class=" bg-white border-0 fa-solid fa-broom"></button></div>
+            <div class="bg-white col-sm-5 m-auto px-4 py-4 rounded task_content d-flex flex-column gap-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="fs-1" id="datepicker_date" >9</div>
+                        <div>
+                            <div id="datepicker_month">May</div>
+                            <div id="datepicker_year">2024</div>
+                        </div>
+                        <button id="DatePicker" class="datepicker-native btn btn-outline-secondary btn-sm rounded-circle">
+                            <i class="fa-regular fa-calendar "></i>
+                            <input type="date" class="datepicker-native-input" id="datepicker" onchange="handleDatePicker(event)" />
+                        </button>
+                    </div>
+                    <div class="fs-5" id="datepicker_day">Thursday</div>
                 </div>
-                <div class="d-flex bg-secondary-subtle rounded-pill">
-                    <div class="w-75">
-                        <input id="task" class="p-3 w-100 bg-secondary-subtle rounded-pill border-0" type="text" placeholder="Add your task" class="bg-secondary-subtle border-0 w-75 rounded-pill outline-none" ></input>
-                    </div>
-                    <div class="rounded-pill h-100 w-25">
-                        <button onclick="addtask()" class=" add_button text-white fs-5 rounded-pill p-3 w-100 border-0">Add</button>
-                    </div>
+                <hr class="m-0 p-0"/>
+                <div id="task_list">
                 </div>
-                <div id="task_list" class="px-2 gap-1 flex-fill overflow-y-scroll">
-                    <div id="0" class="task d-flex justify-content-between my-3">
-                        <div class="me-2 rounded-circle add_button"><button class="add_button border-0 text-white rounded-circle fa-solid fa-check"></button></div>
-                        <div class="flex-fill text-decoration-line-through">Start Project</div>
-                        <div><button class="bg-white border-0 fa-solid fa-xmark"></button></div>
-                    </div>
-                    <div id="1" class="task d-flex justify-content-between my-3">
-                        <div class="me-2 rounded-circle"><button class="bg-white border-0 fa-regular fa-circle"></button></div>
-                        <div class="flex-fill task_name w-75">Start Project...................................................................................................................................................................................................................................</div>
-                        <div><button class="bg-white border-0 fa-solid fa-xmark"></button></div>
-                    </div>
+                <div class="text-center justify-content-center d-flex gap-1">
+                    <div class="input-group">
+                        <input id="task-input" type="text" class="form-control border border-dark-subtle" >
+                    </div>  
+                    <button type="button" class="btn btn btn-outline-success" onclick="add_task()">Add</button>
                 </div>
             </div>
             <div class="col-sm-2"></div>
         </div>
-            <script type="module" src="./script.js"></script>
+        <script type="module" src="./script.js"></script>
     </body>
 </html>
