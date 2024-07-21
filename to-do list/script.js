@@ -1,136 +1,205 @@
-let drag_task_list = [];
 import taskDB from "./DB.js"
 
-let db = null
-let num_tasks = null;
-window.onload = function(){
-    let success = async (val) =>{
-        num_tasks = val
-        await displaytask()
-        drag_task_list = document.querySelectorAll('.item')
-        let box = document.querySelectorAll('.box')
-        drag_task_list.forEach((element)=>{
-            add_dragabble_event(element);
-        });
-        box.forEach((element)=>{
-            add_box_event(element);
-        });
-        let input = document.getElementById("task");
-        input.addEventListener('keypress',(event)=>{
-            if(event.key == "Enter" ){
-                addtask()
-            }
-        })
+let db = null;
+let num_tasks = 0
+let months = {
+    0: 'Jan',
+    1: 'Feb',
+    2: 'Mar',
+    3: 'Apr',
+    4: 'May',
+    5: 'Jun',
+    6: 'Jul',
+    7: 'Aug',
+    8: 'Sep',
+    9: 'Oct',
+    10: 'Nov',
+    11: 'Dec'
+}
+let days = {
+    0: 'Sunday',
+    1: 'Monday',
+    2: 'Tuesday',
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday"
+}
+
+window.onload = () =>{
+    let now = new Date(Date.now());
+    document.getElementById("datepicker").value = now.toISOString().substring(0,10);
+    changeDate(now);
+    let success = (val) =>{
+        num_tasks = val;
+        show_all(num_tasks);
     }
-
-    db = new taskDB(success);
-}
-
-function _task(key,name,completed){
-    let html =  `<div class="box w-100 "></div>
-                <div draggable="true" id="${key}" class="item d-flex justify-content-between my-2">
-                    <div id="task_done_but_${key}" class="me-2 rounded-circle ${completed? "add_button" : ""}"><button onclick="${completed? `task_undone(${key})` : `task_done('${key}')`}" class="${completed? 'add_button border-0 text-white rounded-circle fa-solid fa-check': 'bg-white border-0 fa-regular fa-circle'}"></button></div>
-                    <div id="task_name_${key}" class="flex-fill w-75 task_name ${completed? 'text-decoration-line-through':''}">${name}</div>
-                    <div><button onclick="delete_task('${key}')" class="bg-white border-0 fa-solid fa-xmark"></button></div>
-                </div>`
-    return html;
-}
-
-function add_dragabble_event(element){
-    element.addEventListener('dragstart',(event)=>{
-        event.dataTransfer.setData('item_id',event.target.id)
-        event.target.classList.remove('d-flex')
-        event.target.classList.add('hide');            
-    })
-    element.addEventListener('dragend',(event)=>{
-        event.target.classList.remove('hide')
-        event.target.classList.add('d-flex')
-    })
-}
-
-function add_box_event(element){
-    element.addEventListener('dragover',(event)=>{
-        event.preventDefault();
-        event.target.classList.add('dropover')
-    });
-    element.addEventListener('dragleave',(event)=>{
-        event.target.classList.remove('dropover')
-    })
-    element.addEventListener('drop',(event)=>{
-        event.preventDefault(); 
-        let task = document.getElementById(event.dataTransfer.getData('item_id'));
-        let tasks = document.getElementById('task_list')
-        let boxabove = document.createElement("div")
-        let boxbelow = document.createElement("div")
-        boxabove.className = "box w-100"
-        boxbelow.className = "box w-100"
-        if (task.nextSibling != event.target){
-            task.nextSibling.remove();
+    db = new taskDB(success, document.getElementById("datepicker").value);
+    document.getElementById("task-input").addEventListener('keypress', (event)=>{
+        if(event.key == "Enter"){
+            add_task();
         }
-        tasks.replaceChild(task,event.target)
-        tasks.insertBefore(boxabove,task)
-        tasks.insertBefore(boxbelow,task.nextSibling)
-        add_box_event(boxabove)
-        add_box_event(boxbelow)
     })
 }
 
-async function addtask(){
-    let task = document.getElementById("task");
-    if (task.value != ""){
-        num_tasks+=1
-        let task_id = await db.add_task({"task": task.value, "is_done": false})
-        document.getElementById("task_list").innerHTML += _task(task_id,task.value,false)
-        task.value = "";
+async function handleDatePicker(ev){
+    let dt = new Date(ev.target.value)
+    changeDate(dt)
+    num_tasks = await db.count_tasks(dt.toISOString().substring(0,10))
+    show_all()
+}
+
+function changeDate(dt){
+    document.getElementById("datepicker_date").innerHTML = dt.getDate();
+    document.getElementById("datepicker_month").innerHTML = months[dt.getMonth()];
+    document.getElementById("datepicker_year").innerHTML = dt.getFullYear();
+    document.getElementById("datepicker_day").innerHTML = days[dt.getDay()]
+    document.getElementById("datepicker").value = dt.toISOString().substring(0,10);
+}
+
+function dragover(ev) {
+    ev.preventDefault();
+    if(ev.target.classList.contains("box")){
+        ev.target.classList.add('dropover');
     }
 }
 
-async function displaytask(){
-    let task_list = await db.get_tasks()
-    let html = "";
-    for(let i = 0; i < task_list.length; i+=1){
-        html += _task(task_list[i].key, task_list[i].value.task, task_list[i].value.is_done);
-        if (i == task_list.length - 1) {
-            html += `<div class="box w-100"></div>`
-        }
-    }
-        document.getElementById("task_list").innerHTML = html
+function dragleave(ev){
+    ev.preventDefault();
+    ev.target.classList.remove('dropover')
 }
 
-async function task_done(id){
-    let task_name = document.getElementById(`task_name_${id}`);
-    let task_but = document.getElementById(`task_done_but_${id}`);
-    let update_status =  await db.update_task_status(parseInt(id),true)
-    if (update_status){
-        task_name.classList.add("text-decoration-line-through")
-        task_but.classList.add("add_button");
-        task_but.innerHTML = `<button onclick="task_undone('${id}')" class="add_button border-0 text-white rounded-circle fa-solid fa-check"></button>`
-    }
+function drag(ev) {
+    ev.dataTransfer.setData("task", ev.target.id);
+    ev.dataTransfer.setData("box", ev.target.parentElement.id)
+
+}
+  
+function drop(ev) {
+    ev.preventDefault();
+    let box1 = document.getElementById(ev.dataTransfer.getData("box"))
+    let task1 = document.getElementById(ev.dataTransfer.getData("task"))
+    let box2 =  ev.target.closest('.box')
+    let task2 = box2.firstElementChild;
+    let task1_id = task1.id.match(/\d+$/)[0];
+    let task2_id = task2.id.match(/\d+$/)[0];
+    db.update_task(task1_id,{"box_id":box2.id})
+    db.update_task(task2_id,{"box_id":box1.id})
+    box1.removeChild(task1);
+    box1.appendChild(task2);
+    box2.appendChild(task1);
 }
 
-async function task_undone(id){
-    let task_name = document.getElementById(`task_name_${id}`);
-    let task_but = document.getElementById(`task_done_but_${id}`);
-    let update_status =  await db.update_task_status(id,false)
-    if (update_status){
-        task_name.classList.remove("text-decoration-line-through");
-        task_but.classList.remove("add_button");
-        task_but.innerHTML = `<button onclick="task_done('${id}')" class="bg-white border-0 fa-regular fa-circle"></button>`
+function _note(id, task, done){
+    return `<div done="${+done}" id="task_${id}" draggable="true" ondragstart="drag(event)" class="task fs-6 d-flex ${done?'text-secondary' : ''}">
+                            <div class="flex-fill">${task}</div>
+                            <div class="d-flex gap-2">
+                                <div class="delete-btn mouse_hover"><i class="fa-solid fa-trash"></i></div>
+                                <div class="task-status mouse_hover"><i class="fa-circle-check ${done?'text-success fa-solid' : 'fa-regular'}"></i></div>
+                            </div>
+                        </div>`
+}
+
+async function add_box(id){
+    let task_list = document.getElementById("task_list");
+    let new_box = document.createElement('div')
+    new_box.id = id;
+    new_box.classList.add('box');
+    new_box.addEventListener("drop", (e)=>{e.stopPropagation();drop(e)})
+    new_box.addEventListener("dragover", (e)=>{e.stopPropagation();dragover(e)})
+    new_box.addEventListener("dragleave", (e)=>{e.stopPropagation();dragleave(e)})
+    task_list.appendChild(new_box);
+    return new_box;
+}
+
+async function add_task_db(task, done, date, box_id){
+    let data = {
+        "name" : task,
+        "is_done": done,
+        "date": date,
+        "box_id": box_id,
+    }
+    let res = await db.add_task(data);
+    return res;
+}
+
+async function add_task_display(task, done, box_id, task_id){
+    let box = document.getElementById(box_id);
+    box.innerHTML = _note(task_id, task, done);
+    box.querySelector(".delete-btn").addEventListener('click', () => delete_task(`task_${task_id}`))
+    box.querySelector(".task-status").addEventListener('click', () => update_task_status(`task_${task_id}`))
+    return box;
+}
+
+async function add_task(){
+    let task_input = document.getElementById("task-input");
+    let date = document.getElementById("datepicker").value;
+    let box_id = `box_${num_tasks+1}`;
+    let box = add_box(box_id);
+    let task_id = await add_task_db(task_input.value,false,date,box_id);
+    add_task_display(task_input.value,false,box_id,task_id);
+    task_input.value = "";
+    num_tasks++;
+}
+
+async function show_all(){
+    document.getElementById("task_list").innerHTML = ""
+    let dateinp = document.getElementById("datepicker")
+    let tasks = await db.get_tasks(dateinp.value);
+    for (let i = 1; i <= num_tasks; i+=1){
+        add_box(`box_${i}`);
+    }
+    for (let i = 0; i < num_tasks; i+=1){
+        add_task_display(tasks[i]["name"], tasks[i]["is_done"], tasks[i]["box_id"], tasks[i]["id"])
     }
 }
 
 async function delete_task(id){
-    await db.delete_task(parseInt(id));
-    displaytask()
+    let task = document.getElementById(id);
+    let box = task.parentElement;
+    let val = delete_task_display(box, task);
+    db.delete_task(id.match(/\d+$/)[0],val["mapping"]);
+    num_tasks-=1
 }
 
-function clear_all(){
-    db.delete_all_tasks()
-    displaytask()
+
+function delete_task_display(box, task){
+    let box1_id = parseInt(box.id.match(/\d+$/)[0]);
+    let new_mapping = {}
+    box.remove();
+    for (let i = box1_id+1; i <= num_tasks; i++){
+        let box = document.getElementById(`box_${i}`);
+        let t = box.firstChild;
+        box.id = `box_${i-1}`
+        new_mapping[t.id] = box.id;
+    }
+    return {
+        "task": task.id,
+        "mapping": new_mapping
+    };
 }
 
-window.addtask = addtask
-window.task_done = task_done
-window.task_undone = task_undone
-window.delete_task = delete_task
-window.clear_all = clear_all
+async function update_task_status(id){
+    let task = document.getElementById(id);
+    let status = Boolean(parseInt(task.getAttribute("done")));
+    let res = await db.update_task_status(parseInt(id.match(/\d+$/)[0]), !status);
+    if(res){
+        let btn = task.querySelector(".task-status").firstChild
+        if(!status){
+            task.classList.add("text-secondary");
+            btn.classList.add("text-success" ,"fa-solid")
+        }else{
+            task.classList.remove("text-secondary");
+            btn.classList.remove("text-success" ,"fa-solid")
+            btn.classList.add('fa-regular')
+        }
+        task.setAttribute("done", +!status)
+    }
+}
+
+window.add_task = add_task
+window.dragover = dragover
+window.drag = drag
+window.drop = drop
+window.handleDatePicker = handleDatePicker;
+window.dragleave = dragleave;
