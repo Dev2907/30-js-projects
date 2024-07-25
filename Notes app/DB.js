@@ -48,7 +48,7 @@ class notesDB {
      */
     async get_note(query) {
         try {
-            let res = await this.db.getDB("all_notes", query);
+            let res = await this.db.getDB("all_notes",query= query);
             return res;
         } catch (error) {
             console.log(error);

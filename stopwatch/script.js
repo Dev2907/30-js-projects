@@ -4,22 +4,22 @@ let log = []
 function main(){
     let t = window.setInterval(() => {
         let cursec = document.getElementById("sec").innerHTML;
-        cursec = parseInt(cursec) + 1
+        cursec = parseInt(cursec) + 1;
         let curmin = document.getElementById("min");
         let curhr = document.getElementById("hour");
         if(! is_paused){
              document.getElementById("sec").innerHTML = cursec;
         }
-        if(cursec > 60){
+        if(cursec >= 60){
             curmin.innerHTML = parseInt(curmin.innerHTML)+1
             document.getElementById("sec").innerHTML = 0;
         }
-        if(parseInt(curmin.innerHTML) > 60){
+        if(parseInt(curmin.innerHTML) >= 60){
             curhr.innerHTML = parseInt(curhr.innerHTML) + 1;
             curmin.innerHTML = 0
         }
 
-    }, 100);
+    }, 1000);
 }
 
 function pause(){
@@ -90,7 +90,7 @@ function reset(){
     document.getElementById('hour').innerHTML = 0
     document.getElementById("laps").innerHTML = ""
     log = []
-    is_paused = true;
+    pause()
 }
 
 main()
