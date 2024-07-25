@@ -250,6 +250,7 @@ function clear_search_input(){
     document.getElementById('all_notes').innerHTML = "<div class='row row_last'></div><br/>";
     document.getElementById("search").value = '';
     show_all(num_notes,cur_placements)
+    enable_create_new();
 }
 
 window.clear_search_input = clear_search_input
