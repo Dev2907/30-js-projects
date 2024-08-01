@@ -1,0 +1,109 @@
+.sidebar {
+    background-color: #2f2f2f;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.main-content {
+    background-color: #1f1f1f;
+    color: rgb(234, 233, 233);
+    min-height: 100vh;
+}
+
+.appLogo{
+    height:20%;
+    background:url('./logo.png');
+    background-size:cover; 
+    background-position:center;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    background-color: #1f1f1f;
+    min-height: 100%;
+}
+
+.grid-box {
+    background-color: #2f2f2f;
+    text-align: center;
+}
+  
+.quote {
+    grid-column-start: 1;
+    grid-column-end: 4;
+}
+
+.timer{
+    grid-row-start: 2;
+    grid-row-end: 6;
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+
+.calender{
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 2;
+    grid-row-end: 8;
+}
+
+.todo{
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 6;
+    grid-row-end: 13;
+}
+
+.notes{
+    grid-row-start: 8;
+    grid-row-end: 13;
+    grid-column-start:2 ;
+    grid-column-end: 4;
+}
+
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto;
+    }
+
+    .grid-container>div {
+        grid-column: 1;
+    }
+
+    .quote{
+        grid-row-start: 1;
+        grid-row-end: 2;
+    }
+
+    .clock{
+        grid-row-start: 2;
+        grid-row-end: 3;
+    }
+
+    .calender{
+        grid-row-start: 3;
+        grid-row-end: 4;
+    }
+    
+    .timer{
+        grid-row-start: 4;
+        grid-row-end: 5;
+    }
+
+    .todo{
+        grid-row-start: 5;
+        grid-row-end: 6;
+    }
+
+    .notes{
+        grid-row-start: 6;
+        grid-row-end: 7;
+    }
+}
