@@ -1,12 +1,26 @@
+:root{
+    --primary: #1f1f1f;
+    --white: #ffff;
+    --grey: #2f2f2f;
+    --bgrey: #979797;
+    --green: #87A330;
+    --blue: #59A2B3;
+}
+
+*{
+    font-family: "Shantell Sans", cursive;
+    font-optical-sizing: auto;
+}
+
 .sidebar {
-    background-color: #2f2f2f;
+    background-color: var(--grey);
     min-height: 100vh;
     padding: 20px;
 }
 
 .main-content {
-    background-color: #1f1f1f;
-    color: rgb(234, 233, 233);
+    background-color: var(--primary);
+    color: var(--white);
     min-height: 100vh;
 }
 
@@ -17,50 +31,91 @@
     background-position:center;
 }
 
+.colorBGrey{
+    color: var(--bgrey);
+}
+
+.colorBlue{
+    color: var(--blue);
+}
+
+.colorWhite{
+    color: var(--white) ;
+}
+
+.stopwatchLaps > thead{
+    border-bottom: 1px solid var(--bgrey);
+}
+
+.stopwarchDivider{
+    border-right: 1px solid var(--white);
+}
+
+td{
+    text-align: center;
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: auto auto auto;
-    background-color: #1f1f1f;
+    background-color: var(--primary);
     min-height: 100%;
 }
 
 .grid-box {
-    background-color: #2f2f2f;
-    text-align: center;
+    background-color: var(--grey);
 }
-  
+
+.calenderHeader{
+    border-bottom: 1px solid var(--bgrey);
+}
+
+.calenderDropdown{
+    background-color: inherit;
+    border: none;
+    color: var(--bgrey);
+}
+
+
+
+
+
 .quote {
+    grid-row-start: 1;
+    grid-row-end: 3;
     grid-column-start: 1;
-    grid-column-end: 4;
+    grid-column-end: 21;
 }
 
 .timer{
-    grid-row-start: 2;
-    grid-row-end: 6;
+    grid-row-start: 3;
+    grid-row-end: 8;
     grid-column-start: 1;
-    grid-column-end: 3;
+    grid-column-end: 11;
 }
 
 .calender{
-    grid-column-start: 3;
-    grid-column-end: 4;
-    grid-row-start: 2;
-    grid-row-end: 8;
+    grid-row-start: 3;
+    grid-row-end: 10;
+    grid-column-start: 11;
+    grid-column-end: 21;
 }
 
 .todo{
+    grid-row-start: 8;
+    grid-row-end: 21;
     grid-column-start: 1;
-    grid-column-end: 2;
-    grid-row-start: 6;
-    grid-row-end: 13;
+    grid-column-end: 8;
 }
 
 .notes{
-    grid-row-start: 8;
-    grid-row-end: 13;
-    grid-column-start:2 ;
-    grid-column-end: 4;
+    grid-row-start: 10;
+    grid-row-end: 21;
+    grid-column-start: 8;
+    grid-column-end: 21;
 }
+
+
 
 
 @media (max-width: 768px) {
