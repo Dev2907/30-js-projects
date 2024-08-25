@@ -19,7 +19,7 @@
                     <nav class="col-md-2 sidebar d-none d-lg-block">
                         <div class="appLogo d-flex justify-content-center align-items-end mb-3"></div>
                         <div class="sidebarItems ps-3 colorBGrey">
-                            <div style="color: #98BB25;"><h5><i class="fa-solid fa-gauge me-3"></i>Dashboard</h5></div>
+                            <div class="colorGreen"><h5><i class="fa-solid fa-gauge me-3"></i>Dashboard</h5></div>
                             <div><h5><i class="fa-solid fa-stopwatch-20 me-3"></i>Timer</h5></div>
                             <div><h5><i class="fa-solid fa-bullseye me-3"></i>To Do</h5></div>
                             <div><h5><i class="fa-regular fa-note-sticky me-3"></i>Notes</h5></div>
@@ -40,23 +40,23 @@
 
                             <!--Stopwatch Block-->
                             <div class="grid-box shadow timer rounded">
-                                <div class="colorBlue px-3 pt-2 fs-5">
+                                <div class="colorBlue px-3 pt-2 fs-4">
                                     <i class="fa-solid fa-stopwatch me-2"></i><span>Stopwatch</span>
                                 </div>
 
-                                <div class="d-flex align-items-center justify-content-center gap-5 h-75">
+                                <div class="d-flex align-items-center justify-content-center gap-1 gap-md-5 h-75">
                                     <div class="fs-1" >
                                         <div class="text-center">
                                             <span>0</span> : <span>0</span> : <span>0</span>
                                         </div>
                                         <hr/>
                                         <div>
-                                            <button class="btn"><i class="fs-2 colorWhite fa-regular fa-flag fw-light"></i></button>
-                                            <button class="btn"><i class="fs-2 colorBlue fa-regular fa-circle-play"></i></button>
-                                            <button class="btn"><i class="fs-2 colorWhite fa-solid fa-rotate-right"></i></button>
+                                            <button class="btn fs-3"><i class="colorWhite fa-regular fa-flag fw-light"></i></button>
+                                            <button class="btn fs-3"><i class="colorBlue fa-regular fa-circle-play"></i></button>
+                                            <button class="btn fs-3"><i class="colorWhite fa-solid fa-rotate-right"></i></button>
                                         </div>
                                     </div>
-                                    <div class="stopwarchDivider h-100"></div>
+                                    <div class="Divider h-100"></div>
                                     <div class="h-100">
                                         <table class="stopwatchLaps">
                                             <thead >
@@ -81,11 +81,18 @@
                             </div>
 
                             <!--Calender Block-->
-                            <div class="grid-box shadow calender rounded p-3">
-                                <table class="rounded w-100 h-100">
+                            <div class="grid-box shadow calender rounded p-3 d-flex justify-content-between gap-2 gap-md-4">
+                                <table class="h-100">
                                     <tbody id="calender_table_body">
                                     </tbody>
                                 </table>
+                                <div class="Divider"></div>
+                                <div class="h-100 flex-fill ">
+                                    <div class="d-flex">
+                                        <span class="flex-fill">No events today</span>
+                                        <i class="fa-regular fa-calendar-plus"></i>
+                                    </div>
+                                </div>
                             </div>
 
                             <!--Clock Block-->
@@ -94,7 +101,28 @@
                                 <hr/>
                                 <div>August 11</div>
                             </div>
-                            <div class="grid-box shadow todo rounded"></div>
+
+                            <!--ToDo Block-->
+                            <div class="grid-box shadow todo rounded">
+                                <div class="colorGreen px-3 pt-2 fs-4">
+                                    <i class="fa-solid fa-list-check me-2"></i><span>My Tasks</span>
+                                </div>
+                                <br/>
+                                <div class="taskList px-2 fs-6">
+                                    <div class="d-flex justify-content-between py-2 px-2 align-items-center">
+                                        <span><span>01 &nbsp;&nbsp;</span>Complete Project</span>
+                                        <i class="fa-regular fa-circle"></i>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-2 px-2 align-items-center">
+                                        <span><span>02 &nbsp;&nbsp;</span>Complete Project</span>
+                                        <i class="fa-regular fa-circle"></i>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1 px-2 align-items-center">
+                                        <span class="colorBGrey"><span>03 &nbsp;&nbsp;</span>Complete Project</span>
+                                        <i class="fa-solid fa-circle-check colorGreen"></i>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="grid-box shadow notes rounded"></div>
                         </div>
                     </main>

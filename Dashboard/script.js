@@ -12,6 +12,7 @@ class QuoteBlock{
     async loadQuote(){
         let quoteGen = new Quote()
         let quote = await quoteGen.fetch_quote()
+        debugger;
         let quoteblock = document.querySelector(".quote")
         quoteblock.querySelector('.quoteTxt').innerHTML = quote['text']
         quoteblock.querySelector('.author').innerHTML = "-" + quote['author'].split(",")[0]
@@ -26,18 +27,18 @@ class calenderBlock{
         window.year = today.getFullYear();
         window.date = today.getDate();
         window.day = today.getDay();
-        let calenderObj = new calender();
-        await calenderObj.load_calender(calenderTable, window.year, window.month, window.date, window.day);
+        let calenderObj = new calender(calenderTable, window.year, window.month, window.date, window.day);
+        await calenderObj.load_calender();
         let nextMonthCall = () => {
             if (window.month == 11) {
                 window.year += 1
             }
             window.month = (window.month+1)%12;
-            calenderObj.load_calender(calenderTable,window.year,window.month,window.date, window.day);
+            calenderObj.month = window.month;
+            calenderObj.load_calender();
             document.getElementById("nextmonth").addEventListener('click', nextMonthCall)
             document.getElementById("prevmonth").addEventListener('click', prevMonthCall)
         }
-        document.getElementById("nextmonth").addEventListener('click', nextMonthCall)
         
         let prevMonthCall = () => {
             if(window.month == 0) {
@@ -46,10 +47,12 @@ class calenderBlock{
             }else{
                 window.month -= 1
             }
-            calenderObj.load_calender(calenderTable,window.year,window.month,window.date,window.day);
+            calenderObj.month = window.month;
+            calenderObj.load_calender();
             document.getElementById("prevmonth").addEventListener('click', prevMonthCall)
             document.getElementById("nextmonth").addEventListener('click', nextMonthCall)
         }
+        document.getElementById("nextmonth").addEventListener('click', nextMonthCall)
         document.getElementById("prevmonth").addEventListener('click', prevMonthCall)
     }
 }

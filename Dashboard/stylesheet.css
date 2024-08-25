@@ -43,11 +43,15 @@
     color: var(--white) ;
 }
 
+.colorGreen{
+    color: var(--green);
+}
+
 .stopwatchLaps > thead{
     border-bottom: 1px solid var(--bgrey);
 }
 
-.stopwarchDivider{
+.Divider{
     border-right: 1px solid var(--white);
 }
 
@@ -76,9 +80,17 @@ td{
     color: var(--bgrey);
 }
 
+.calenderToday{
+    background-color: var(--green);
+}
 
+.calender>table{
+    table-layout: fixed;
+}
 
-
+.taskList>div{
+    border-bottom: 1px solid var(--bgrey);
+}
 
 .quote {
     grid-row-start: 1;
@@ -91,13 +103,13 @@ td{
     grid-row-start: 3;
     grid-row-end: 8;
     grid-column-start: 1;
-    grid-column-end: 11;
+    grid-column-end: 15;
 }
 
 .calender{
     grid-row-start: 3;
     grid-row-end: 10;
-    grid-column-start: 11;
+    grid-column-start: 15;
     grid-column-end: 21;
 }
 
@@ -105,18 +117,15 @@ td{
     grid-row-start: 8;
     grid-row-end: 21;
     grid-column-start: 1;
-    grid-column-end: 8;
+    grid-column-end: 10;
 }
 
 .notes{
     grid-row-start: 10;
     grid-row-end: 21;
-    grid-column-start: 8;
+    grid-column-start: 10;
     grid-column-end: 21;
 }
-
-
-
 
 @media (max-width: 768px) {
     .sidebar {
