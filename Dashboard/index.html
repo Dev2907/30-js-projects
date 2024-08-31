@@ -27,54 +27,56 @@
                     </nav>
 
                     <!--Main page-->
-                    <main class="col-md ml-sm-auto main-content">
+                    <main class="col-md ml-sm-auto main-content d-flex flex-column">
 
-                        <div class="grid-container py-3 gap-3">
-                            <!--Quote Block-->
-                            <div class="grid-box shadow quote rounded d-flex justify-content-center align-items-center">
-                                <div>
-                                    <div class="fs-5 px-5 quoteTxt"></div>
-                                    <div class="fs-6 colorBGrey d-flex justify-content-end author"></div>
-                                </div>
+                        <!--Quote Block-->
+                        <div class="grid-box shadow quote rounded d-flex justify-content-center align-items-center">
+                            <div>
+                                <div class="fs-5 px-5 quoteTxt">Some Quote</div>
+                                <div class="fs-6 colorBGrey d-flex justify-content-end author">-some author</div>
                             </div>
+                        </div>
 
+                        <div class="grid-container py-3 gap-3 flex-fill">
                             <!--Stopwatch Block-->
                             <div class="grid-box shadow timer rounded">
                                 <div class="colorBlue px-3 pt-2 fs-4">
                                     <i class="fa-solid fa-stopwatch me-2"></i><span>Stopwatch</span>
                                 </div>
 
-                                <div class="d-flex align-items-center justify-content-center gap-1 gap-md-5 h-75">
-                                    <div class="fs-1" >
+                                <div class="d-flex align-items-center justify-content-center gap-2 gap-md-2 h-75 pb-2">
+                                    <div class="fs-3" >
                                         <div class="text-center">
-                                            <span>0</span> : <span>0</span> : <span>0</span>
+                                            <span id="hour">0</span> : <span id="min">0</span> : <span id="sec">0</span>
                                         </div>
                                         <hr/>
                                         <div>
-                                            <button class="btn fs-3"><i class="colorWhite fa-regular fa-flag fw-light"></i></button>
-                                            <button class="btn fs-3"><i class="colorBlue fa-regular fa-circle-play"></i></button>
-                                            <button class="btn fs-3"><i class="colorWhite fa-solid fa-rotate-right"></i></button>
+                                            <button id="stopwatchLap" class="btn fs-4"><i class="colorWhite fa-regular fa-flag fw-light"></i></button>
+                                            <button id="stopwatchPlay" class="btn fs-4"><i class="colorBlue fa-regular fa-circle-play"></i></button>
+                                            <button id="stopwatchReset" class="btn fs-4"><i class="colorWhite fa-solid fa-rotate-right"></i></button>
                                         </div>
                                     </div>
                                     <div class="Divider h-100"></div>
-                                    <div class="h-100">
+                                    <div class="stopwatchLapsContainer">
                                         <table class="stopwatchLaps">
                                             <thead >
                                                 <td class="p-1 colorBlue ">Lap</td>
                                                 <td class="p-1">Lap time</td>
                                                 <td class="p-1">Overall time</td>
                                             </thead>
-                                            <tr>
-                                                <td class="p-1 colorBlue">
-                                                    0
-                                                </td>
-                                                <td class="p-1">
-                                                    0
-                                                </td>
-                                                <td class="p-1">
-                                                    0
-                                                </td>
-                                            </tr>
+                                            <tbody class="stopwatchLapsBody">
+                                                <tr>
+                                                    <td class="p-1 colorBlue">
+                                                        0
+                                                    </td>
+                                                    <td class="p-1">
+                                                        0 : 0 : 0
+                                                    </td>
+                                                    <td class="p-1">
+                                                        0 : 0 : 0
+                                                    </td>
+                                                </tr>
+                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -123,7 +125,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="grid-box shadow notes rounded"></div>
+                            <div class="grid-box shadow notes rounded">
+                            </div>
                         </div>
                     </main>
                 </div>
