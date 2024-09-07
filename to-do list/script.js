@@ -91,13 +91,15 @@ function drop(ev) {
 }
 
 function _note(id, task, done){
-    return `<div done="${+done}" id="task_${id}" draggable="true" ondragstart="drag(event)" class="task fs-6 d-flex ${done?'text-secondary' : ''}">
-                            <div class="flex-fill">${task}</div>
-                            <div class="d-flex gap-2">
-                                <div class="delete-btn mouse_hover"><i class="fa-solid fa-trash"></i></div>
-                                <div class="task-status mouse_hover"><i class="fa-circle-check ${done?'text-success fa-solid' : 'fa-regular'}"></i></div>
-                            </div>
-                        </div>`
+    return `
+        <div done="${+done}" id="task_${id}" draggable="true" ondragstart="drag(event)" class="task fs-6 d-flex ${done?'text-secondary' : ''}">
+            <div class="flex-fill">${task}</div>
+            <div class="d-flex gap-2">
+                <div class="delete-btn mouse_hover"><i class="fa-solid fa-trash"></i></div>
+                <div class="task-status mouse_hover"><i class="fa-circle-check ${done?'text-success fa-solid' : 'fa-regular'}"></i></div>
+            </div>
+        </div>
+    `
 }
 
 async function add_box(id){
